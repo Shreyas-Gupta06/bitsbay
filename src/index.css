@@ -1,0 +1,8 @@
+@import "tailwindcss/preflight";
+@tailwind utilities;
+
+@import "tailwindcss";
+
+body {
+  font-family: 'Intel One Mono', monospace;
+}
