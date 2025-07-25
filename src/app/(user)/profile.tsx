@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import UserLayout from "./layout/userLayout";
-import { logoutUser } from "../../api/logout";
 
 export default function Profile() {
   // Dummy data for testing
