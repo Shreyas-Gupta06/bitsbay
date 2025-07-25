@@ -1,207 +1,158 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
+import dummyListings from "../../utils/dummyData";
 import UserLayout from "./layout/userLayout";
+import { IonIcon } from "@ionic/react";
+import { funnelOutline } from "ionicons/icons";
 
-const ListingsPage = () => {
-  const [showPopup, setShowPopup] = useState(false);
-  const [formData, setFormData] = useState<{
-    title: string;
-    description: string;
-    tags: string[];
-    year: string;
-    negotiable: boolean;
-  }>({
-    title: "",
-    description: "",
-    tags: [],
-    year: "",
-    negotiable: false,
-  });
-  const [charCount, setCharCount] = useState(0);
-  const maxDescriptionLength = 200;
+export default function ListingsPage() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(4);
+  const [filter, setFilter] = useState("all");
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value, type } = e.target;
-    const checked =
-      type === "checkbox" ? (e.target as HTMLInputElement).checked : undefined;
-    if (name === "description") {
-      setCharCount(value.length);
-    }
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : value,
-    });
-  };
+  useEffect(() => {
+    const updateItemsPerPage = () => {
+      const width = window.innerWidth;
+      if (width >= 1024) {
+        setItemsPerPage(12); // 4 columns, 3 rows
+      } else if (width >= 768) {
+        setItemsPerPage(8); // 2 columns, 4 rows
+      } else {
+        setItemsPerPage(4); // 1 column, 4 rows
+      }
+    };
 
-  const handleTagSelection = (tag: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      tags: prev.tags.includes(tag)
-        ? prev.tags.filter((t) => t !== tag)
-        : [...prev.tags, tag],
-    }));
-  };
+    updateItemsPerPage();
+    window.addEventListener("resize", updateItemsPerPage);
+    return () => window.removeEventListener("resize", updateItemsPerPage);
+  }, []);
 
-  const handleYearSelection = (year: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      year,
-    }));
-  };
+  const filteredListings =
+    filter === "all"
+      ? dummyListings
+      : dummyListings.filter(
+          (listing) =>
+            listing.year &&
+            listing.year.trim().toLowerCase() === filter.trim().toLowerCase()
+        );
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (charCount > maxDescriptionLength || !formData.title || !formData.year) {
-      return;
-    }
-    // Simulate POST request (commented out)
-    // fetch('/api/listings', {
-    //   method: 'POST',
-    //   body: JSON.stringify(formData),
-    //   headers: { 'Content-Type': 'application/json' },
-    // });
-    alert("Listing successfully posted!");
-    setShowPopup(false);
+  const totalPages = Math.ceil(filteredListings.length / itemsPerPage);
+  const paginatedListings = filteredListings.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   return (
-    <UserLayout className="no-scroll">
-      <div className="listings-page bg-white">
-        <div className="pt-4 flex flex-col items-start">
-          <h1 className="text-4xl font-bold mb-6.5">My Listings</h1>
-          <button
-            className="add-listing-btn bg-green-700 text-white px-6 py-3 rounded shadow-lg hover:bg-green-300 hover:text-black text-xl ml-4.5 "
-            onClick={() => setShowPopup(true)}
+    <UserLayout>
+      <div className="flex justify-between items-center mb-4 px-4">
+        <div className="flex items-center gap-2">
+          <IonIcon icon={funnelOutline} className="w-6 h-6 text-[#123924]" />
+          <span className="text-[#123924] font-medium">Filter:</span>
+          <select
+            value={filter}
+            onChange={(e) => {
+              console.log(`Selected filter: ${e.target.value}`);
+              setFilter(e.target.value);
+            }}
+            className="border border-gray-300 rounded-md px-2 py-1 text-sm text-[#123924]"
           >
-            + Add Listing
-          </button>
+            <option value="all">All</option>
+            <option value="1st yr">1st Year</option>
+            <option value="2nd yr">2nd Year</option>
+            <option value="3rd yr">3rd Year</option>
+            <option value="4th yr">4th Year</option>
+          </select>
         </div>
+      </div>
 
-        <div className="my-12 flex items-center w-full">
-          <div className="flex-grow border-t border-gray-300"></div>
-          <span className="mx-6 text-gray-500 text-2xl">●</span>
-          <div className="flex-grow border-t border-gray-300"></div>
-        </div>
-
-        {showPopup && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-90 no-scroll">
-            <div className="bg-gray-800 p-6 rounded shadow-lg text-white">
-              <form onSubmit={handleSubmit}>
-                <label className="block mb-4 text-lg text-white">
-                  Title:
-                  <input
-                    type="text"
-                    name="title"
-                    value={formData.title}
-                    onChange={handleInputChange}
-                    className="border rounded px-2 py-1 w-full bg-gray-700 text-white"
-                    required
-                  />
-                </label>
-                <label className="block mb-4 text-lg text-white">
-                  Description:
-                  <textarea
-                    name="description"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    maxLength={maxDescriptionLength}
-                    className="border rounded px-2 py-1 w-full bg-gray-700 text-white"
-                    required
-                  />
-                  <p
-                    className={
-                      charCount > maxDescriptionLength
-                        ? "text-red-500"
-                        : "text-gray-300"
-                    }
+      <main className="flex-1 bg-white px-4 py-6 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 auto-rows-[minmax(250px,_auto)]">
+        {paginatedListings.map((listing) => (
+          <div
+            key={listing.id}
+            className="bg-[#f0f4f8] rounded-lg shadow-md p-3 sm:p-4 flex flex-col h-[250px] sm:h-[300px] overflow-hidden"
+          >
+            <div className="flex-1 overflow-hidden">
+              <h2 className="text-[#123924] text-sm sm:text-md font-semibold">
+                {listing.title}
+              </h2>
+              <p className="text-gray-600 text-xs sm:text-sm overflow-hidden text-ellipsis line-clamp-6">
+                {listing.description.slice(0, 200)}
+              </p>
+            </div>
+            <div>
+              <div className="flex flex-wrap gap-0.5 sm:gap-1 mt-1">
+                {listing.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="bg-green-200 text-green-800 text-[10px] sm:text-xs px-1 sm:px-2 py-0.5 sm:py-1 rounded-full"
                   >
-                    {charCount}/{maxDescriptionLength} characters
-                  </p>
-                </label>
-                <div className="tags mb-4">
-                  <p className="text-white">Select Tags:</p>
-                  {[
-                    "book",
-                    "notes",
-                    "slides",
-                    "pyqs",
-                    "all tables (thermo, pns)",
-                    "lab coat",
-                    "calculator",
-                  ].map((tag) => (
-                    <button
-                      type="button"
-                      key={tag}
-                      className={`px-2 py-1 rounded-full border mx-2 ${
-                        formData.tags.includes(tag)
-                          ? "bg-yellow-500 text-black"
-                          : "bg-gray-700 text-white"
-                      }`}
-                      onClick={() => handleTagSelection(tag)}
-                    >
-                      {tag}
-                    </button>
-                  ))}
-                </div>
-                <div className="year-tags mb-4">
-                  <p className="text-white">Select Year you are selling to:</p>
-                  {["1st yr", "2nd yr", "3rd yr", "4th yr"].map((year) => (
-                    <button
-                      type="button"
-                      key={year}
-                      className={`px-2 py-1 rounded-full border mx-2 ${
-                        formData.year === year
-                          ? "bg-blue-300 text-black"
-                          : "bg-gray-700 text-white"
-                      }`}
-                      onClick={() => handleYearSelection(year)}
-                    >
-                      {year}
-                    </button>
-                  ))}
-                </div>
-                <label className="mb-4 text-lg text-white flex items-center">
-                  Negotiable:
-                  <input
-                    type="checkbox"
-                    name="negotiable"
-                    checked={formData.negotiable}
-                    onChange={handleInputChange}
-                    className="ml-2 w-6 h-6 bg-gray-700 text-white mt-1"
+                    {tag}
+                  </span>
+                ))}
+                {listing.year && (
+                  <span className="bg-blue-200 text-blue-800 text-[10px] sm:text-xs px-1 sm:px-2 py-0.5 sm:py-1 rounded-full">
+                    {listing.year}
+                  </span>
+                )}
+                {listing.negotiable && (
+                  <span className="bg-yellow-200 text-yellow-800 text-[10px] sm:text-xs px-1 sm:px-2 py-0.5 sm:py-1 rounded-full">
+                    Negotiable
+                  </span>
+                )}
+              </div>
+              <div className="mt-1 flex items-center gap-0.5 sm:gap-1">
+                <span className="text-[#123924] text-[10px] sm:text-xs font-bold">
+                  {listing.name}
+                </span>
+              </div>
+              <div className="mt-1 flex items-center gap-1">
+                <a
+                  href={`https://api.whatsapp.com/send?phone=${listing.phone}`}
+                  className="bg-green-500 text-white text-[10px] sm:text-xs font-medium hover:bg-green-600 flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-2 rounded-md"
+                >
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+                    alt="WhatsApp"
+                    className="w-4 sm:w-5 h-4 sm:h-5"
                   />
-                </label>
-                <button
-                  type="submit"
-                  className={`px-4 py-2 rounded bg-green-500 text-white text-lg ${
-                    charCount > maxDescriptionLength ||
-                    !formData.title ||
-                    !formData.year
-                      ? "opacity-50 cursor-not-allowed"
-                      : "hover:bg-green-600"
-                  }`}
-                  disabled={
-                    charCount > maxDescriptionLength ||
-                    !formData.title ||
-                    !formData.year
-                  }
-                >
-                  Submit
-                </button>
-                <button
-                  type="button"
-                  className="ml-4 px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600 text-lg"
-                  onClick={() => setShowPopup(false)}
-                >
-                  Cancel
-                </button>
-              </form>
+                  Contact {listing.phone} on WhatsApp
+                </a>
+              </div>
             </div>
           </div>
-        )}
+        ))}
+      </main>
+
+      <div className="flex gap-2 mt-4 mb-4 justify-center items-center">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className={`px-3 py-1 rounded-md text-sm font-medium ${
+            currentPage === 1
+              ? "bg-gray-300 text-gray-500"
+              : "bg-green-500 text-white"
+          }`}
+        >
+          ←
+        </button>
+        <button className="px-3 py-1 rounded-md text-sm font-medium bg-gray-200 text-gray-800">
+          {currentPage}
+        </button>
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className={`px-3 py-1 rounded-md text-sm font-medium ${
+            currentPage === totalPages
+              ? "bg-gray-300 text-gray-500"
+              : "bg-green-500 text-white"
+          }`}
+        >
+          →
+        </button>
       </div>
     </UserLayout>
   );
-};
-
-export default ListingsPage;
+}

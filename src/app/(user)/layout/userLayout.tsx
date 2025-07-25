@@ -3,9 +3,10 @@ import { logoutUser } from "../../../api/logout";
 import { IonIcon } from "@ionic/react";
 import {
   homeOutline,
-  listOutline,
+  createOutline,
   personOutline,
   logOutOutline,
+  addOutline,
 } from "ionicons/icons";
 
 export default function UserLayout({
@@ -23,7 +24,9 @@ export default function UserLayout({
     >
       {/* Header */}
       <header className="w-full bg-[#123924] text-white flex items-center justify-between px-4 py-3">
-        <h1 className="text-2xl font-bold text-center">BITSbay</h1>
+        <a href="/user/home" className="text-2xl font-bold text-center">
+          BITSbay
+        </a>
         <button
           onClick={() => setDrawerOpen(true)}
           className="text-white text-2xl touchable-opacity"
@@ -63,8 +66,15 @@ export default function UserLayout({
               href="/user/listings"
               className="text-black font-bold text-2xl flex items-center gap-2"
             >
-              <IonIcon icon={listOutline} className="w-6 h-6" />
-              My Listings
+              <IonIcon icon={createOutline} className="w-6 h-6" />
+              Listings
+            </a>
+            <a
+              href="/user/mylistings"
+              className="text-black font-bold text-2xl flex items-center gap-2"
+            >
+              <IonIcon icon={addOutline} className="w-6 h-6" />
+              Add Listings
             </a>
             <a
               href="/user/profile"
@@ -95,6 +105,9 @@ export default function UserLayout({
               </a>
             </div>
           </nav>
+          <footer className="mt-auto text-center text-black text-2xl">
+            Made with ❤️ by 2137
+          </footer>
         </div>
       </div>
 

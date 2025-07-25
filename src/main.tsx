@@ -16,6 +16,7 @@ import Developers from "./app/(user)/developers";
 import PhoneNumber from "./app/(user)/phone_num";
 import Profile from "./app/(user)/profile";
 import ListingsPage from "./app/(user)/listings";
+import MyListingsPage from "./app/(user)/mylistings";
 
 // TODO: Replace with your actual Google OAuth Client ID
 const GOOGLE_CLIENT_ID =
@@ -47,6 +48,7 @@ function App() {
         <Route path="/user/phone_num" element={<PhoneNumber />} />
         <Route path="/user/profile" element={<Profile />} />
         <Route path="/user/listings" element={<ListingsPage />} />
+        <Route path="/user/mylistings" element={<MyListingsPage />} />
         {/* other protected routes */}
       </Route>
     </Routes>
