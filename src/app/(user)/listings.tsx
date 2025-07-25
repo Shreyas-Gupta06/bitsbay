@@ -17,7 +17,7 @@ const ListingsPage = () => {
     negotiable: false,
   });
   const [charCount, setCharCount] = useState(0);
-  const maxDescriptionLength = 240;
+  const maxDescriptionLength = 200;
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
