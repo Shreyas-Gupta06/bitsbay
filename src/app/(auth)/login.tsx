@@ -7,10 +7,33 @@ declare global {
   }
 }
 
+const loadGoogleScript = () => {
+  return new Promise((resolve, reject) => {
+    if (document.getElementById("google-jssdk")) {
+      resolve(true);
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.id = "google-jssdk";
+    script.src = "https://accounts.google.com/gsi/client";
+    script.onload = () => resolve(true);
+    script.onerror = () => reject(new Error("Failed to load Google script"));
+    document.body.appendChild(script);
+  });
+};
+
 const GoogleLoginButton = () => {
   useEffect(() => {
     const initializeGoogleLogin = async () => {
       try {
+        await loadGoogleScript();
+
+        if (!window.google) {
+          console.error("Google Identity Services script not loaded.");
+          return;
+        }
+
         window.google.accounts.id.initialize({
           client_id:
             "552439940086-tiavhovc9mrifs6v4hr82bup22nsi4do.apps.googleusercontent.com", // Replace with your actual client ID

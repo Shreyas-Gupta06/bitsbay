@@ -29,7 +29,7 @@ export default function UserLayout({
         </a>
         <button
           onClick={() => setDrawerOpen(true)}
-          className="text-white text-2xl touchable-opacity"
+          className="text-[#ffff00] text-2xl touchable-opacity"
         >
           ☰
         </button>
@@ -43,7 +43,7 @@ export default function UserLayout({
       >
         <div className="absolute inset-0 bg-black bg-opacity-30"></div>
         <div
-          className={`absolute inset-0 bg-white shadow-lg flex flex-col p-6 transition-transform duration-300 ${
+          className={`absolute inset-0 bg-[#fffacd] shadow-lg flex flex-col p-4 transition-transform duration-300 ${
             drawerOpen ? "translate-x-0" : "translate-x-full"
           }`}
           onClick={(e) => e.stopPropagation()}
@@ -54,58 +54,63 @@ export default function UserLayout({
           >
             ✖
           </button>
-          <nav className="mt-6 flex flex-col gap-6 text-xl">
+          <nav className="mt-4 flex flex-col gap-4 text-lg">
             <a
               href="/user/home"
-              className="text-black font-bold text-2xl flex items-center gap-2"
+              className="text-black font-bold text-xl flex items-center gap-2"
             >
-              <IonIcon icon={homeOutline} className="w-6 h-6" />
+              <IonIcon icon={homeOutline} className="w-5 h-5" />
               Home
             </a>
+            <hr className="border-gray-300 w-full" />
             <a
               href="/user/listings"
-              className="text-black font-bold text-2xl flex items-center gap-2"
+              className="text-black font-bold text-xl flex items-center gap-2"
             >
-              <IonIcon icon={createOutline} className="w-6 h-6" />
+              <IonIcon icon={createOutline} className="w-5 h-5" />
               Listings
             </a>
+            <hr className="border-gray-300 w-full" />
             <a
               href="/user/mylistings"
-              className="text-black font-bold text-2xl flex items-center gap-2"
+              className="text-black font-bold text-xl flex items-center gap-2"
             >
-              <IonIcon icon={addOutline} className="w-6 h-6" />
+              <IonIcon icon={addOutline} className="w-5 h-5" />
               Add Listings
             </a>
+            <hr className="border-gray-300 w-full" />
             <a
               href="/user/profile"
-              className="text-black font-bold text-2xl flex items-center gap-2"
+              className="text-black font-bold text-xl flex items-center gap-2"
             >
-              <IonIcon icon={personOutline} className="w-6 h-6" />
+              <IonIcon icon={personOutline} className="w-5 h-5" />
               Profile
             </a>
+            <hr className="border-gray-300 w-full" />
             <div className="mt-0 text-left">
               <a
                 href="#"
                 onClick={logoutUser}
-                className="bg-red-500 text-white font-bold text-xl px-4 py-2 rounded-md flex items-center gap-2 w-fit"
+                className="bg-red-500 text-white font-bold text-lg px-4 py-2 rounded-md flex items-center gap-2 w-fit"
               >
-                <IonIcon icon={logOutOutline} className="w-6 h-6" />
+                <IonIcon icon={logOutOutline} className="w-5 h-5" />
                 Logout
               </a>
             </div>
+            <hr className="border-gray-300 w-full" />
             <div className="mt-0 text-left">
               <a
                 href="/user/developers"
-                className="text-green-600 font-bold text-5xl flex items-center gap-2"
+                className="text-green-600 font-bold text-4xl flex items-center gap-2"
               >
                 &lt;&gt;
-                <span className="text-green-600 font-bold text-xl">
+                <span className="text-green-600 font-bold text-lg">
                   Developers
                 </span>
               </a>
             </div>
           </nav>
-          <footer className="mt-auto text-center text-black text-2xl">
+          <footer className="mt-auto text-center text-black text-xl">
             Made with ❤️ by 2137
           </footer>
         </div>
