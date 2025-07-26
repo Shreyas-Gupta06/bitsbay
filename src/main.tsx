@@ -8,7 +8,6 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
-import { GoogleOAuthProvider } from "@react-oauth/google";
 import { isLoggedIn } from "./utils/common";
 import LoginPage from "./app/(auth)/login";
 import Home from "./app/(user)/home";
@@ -17,10 +16,6 @@ import PhoneNumber from "./app/(user)/phone_num";
 import Profile from "./app/(user)/profile";
 import ListingsPage from "./app/(user)/listings";
 import MyListingsPage from "./app/(user)/mylistings";
-
-// TODO: Replace with your actual Google OAuth Client ID
-const GOOGLE_CLIENT_ID =
-  "552439940086-tiavhovc9mrifs6v4hr82bup22nsi4do.apps.googleusercontent.com";
 
 function App() {
   const location = useLocation();
@@ -57,10 +52,8 @@ function App() {
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </GoogleOAuthProvider>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </React.StrictMode>
 );
