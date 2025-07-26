@@ -1,36 +1,79 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import UserLayout from "./layout/userLayout";
+import api from "../../api/axios";
 
 export default function Profile() {
-  // Dummy data for testing
   const [profileData, setProfileData] = useState({
-    name: "John Doe",
-    email: "johndoe@example.com",
-    phone: "1234567890",
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone_number: "",
   });
-  const [phoneNumber, setPhoneNumber] = useState(profileData.phone);
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        const response = await api.get("/auth/profile/");
+        setProfileData(response.data);
+        setPhoneNumber(response.data.phone_number);
+      } catch (error) {
+        console.error("Error fetching profile data:", error);
+        setErrorMessage("Failed to load profile information.");
+      }
+    };
+
+    fetchProfileData();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const trimmedNumber = phoneNumber.trim();
     const numericPhone = parseInt(trimmedNumber, 10);
 
     if (!isNaN(numericPhone) && trimmedNumber.length === 10) {
       setErrorMessage("");
-      setSuccessMessage("New number saved successfully.");
-      // Commented backend post logic
-      // fetch("/api/update-phone", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({ phone: numericPhone }),
-      // });
 
-      setProfileData({ ...profileData, phone: trimmedNumber });
+      try {
+        const response = await api.put("/auth/profile/", {
+          phone_number: numericPhone,
+        });
+
+        if (response.data && response.data.phone_number === trimmedNumber) {
+          setSuccessMessage("Phone number updated successfully.");
+          setProfileData({ ...profileData, phone_number: trimmedNumber });
+          setIsButtonDisabled(true); // Disable the button
+        } else {
+          throw new Error("Invalid response from server");
+        }
+      } catch (error) {
+        console.error("Error updating phone number:", error);
+        setErrorMessage("Failed to update phone number. Please try again.");
+      }
     } else {
       setErrorMessage("Please enter a valid 10-digit phone number.");
-      setSuccessMessage("");
+    }
+  };
+
+  const handleAddListing = async (listingData) => {
+    try {
+      const profileResponse = await api.get("/auth/profile/");
+      const { first_name, last_name, phone_number } = profileResponse.data;
+
+      const response = await api.post("/listings/", {
+        ...listingData,
+        name: `${first_name} ${last_name}`,
+        phone: phone_number,
+      });
+
+      alert("Listing added successfully!");
+      setListings((prev) => [...prev, response.data]);
+    } catch (error) {
+      console.error("Error adding listing:", error);
+      alert("Listing couldn't be added. Please try again.");
     }
   };
 
@@ -47,15 +90,15 @@ export default function Profile() {
           <label className="block text-gray-700 text-xl font-bold mb-2">
             Name:
           </label>
-          <p className="text-gray-600 text-2xl font-semibold">
-            {profileData.name}
+          <p className="text-gray-600 text-lg font-semibold">
+            {profileData.first_name} {profileData.last_name}
           </p>
         </div>
         <div className="mb-6">
           <label className="block text-gray-700 text-xl font-bold mb-2">
             Email:
           </label>
-          <p className="text-gray-600 text-2xl font-semibold">
+          <p className="text-gray-600 text-lg font-semibold">
             {profileData.email}
           </p>
         </div>
@@ -72,7 +115,12 @@ export default function Profile() {
             />
             <button
               type="submit"
-              className="bg-blue-500 text-white font-bold px-6 py-3 rounded-md hover:bg-blue-600 text-xl"
+              className={`font-bold px-6 py-3 rounded-md text-xl ${
+                isButtonDisabled
+                  ? "bg-gray-400 text-gray-700 cursor-not-allowed"
+                  : "bg-blue-500 text-white hover:bg-blue-600"
+              }`}
+              disabled={isButtonDisabled}
             >
               Save
             </button>

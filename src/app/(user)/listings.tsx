@@ -1,45 +1,50 @@
 import { useState, useEffect } from "react";
-import dummyListings from "../../utils/dummyData";
+import api from "../../api/axios";
 import UserLayout from "./layout/userLayout";
 import { IonIcon } from "@ionic/react";
 import { funnelOutline } from "ionicons/icons";
+import type { Listing } from "../../utils/common";
+import { predefinedTags } from "../../utils/common";
 
 export default function ListingsPage() {
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(4);
+  const [itemsPerPage, setItemsPerPage] = useState(8);
   const [filter, setFilter] = useState("all");
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
-    const updateItemsPerPage = () => {
-      const width = window.innerWidth;
-      if (width >= 1024) {
-        setItemsPerPage(12); // 4 columns, 3 rows
-      } else if (width >= 768) {
-        setItemsPerPage(8); // 2 columns, 4 rows
-      } else {
-        setItemsPerPage(4); // 1 column, 4 rows
+    const fetchListings = async () => {
+      try {
+        const response = await api.get("/listings/");
+        setListings(response.data);
+        setTotalPages(1); // Hardcoded for now, backend will provide this later
+      } catch (error) {
+        console.error("Error fetching listings:", error);
       }
     };
 
-    updateItemsPerPage();
-    window.addEventListener("resize", updateItemsPerPage);
-    return () => window.removeEventListener("resize", updateItemsPerPage);
+    fetchListings();
   }, []);
 
   const filteredListings =
     filter === "all"
-      ? dummyListings
-      : dummyListings.filter(
+      ? listings
+      : listings.filter(
           (listing) =>
             listing.year &&
             listing.year.trim().toLowerCase() === filter.trim().toLowerCase()
         );
 
-  const totalPages = Math.ceil(filteredListings.length / itemsPerPage);
-  const paginatedListings = filteredListings.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const paginatedListings = filteredListings.map((listing) => {
+    const matchedTags = predefinedTags.filter((tag) =>
+      listing.tags.includes(tag)
+    );
+    return {
+      ...listing,
+      tags: matchedTags,
+    };
+  });
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);

@@ -1,5 +1,7 @@
 import { useEffect } from "react";
 import campusImg from "../../assets/images/BITS-Pilani-campus-login.jpg";
+import { BACKEND_URL } from "../../utils/common";
+import axios from "axios";
 
 declare global {
   interface Window {
@@ -58,23 +60,51 @@ const GoogleLoginButton = () => {
   const handleCredentialResponse = async (response: any) => {
     const idToken = response.credential;
     console.log("ID Token from Google:", idToken);
-    // try {
-    //   const backendResponse = await fetch("https://your-backend.com/auth/", {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({ token: idToken }),
-    //   });
 
-    //   const data = await backendResponse.json();
-    //   console.log("Backend tokens:", data);
+    try {
+      const backendResponse = await axios.post(`${BACKEND_URL}/auth/google/`, {
+        id_token: idToken,
+      });
 
-    //   // Store access/refresh token if needed
-    // } catch (err) {
-    //   console.error("Backend error:", err);
-    // }
+      const data = backendResponse.data;
+      console.log("Backend tokens:", data);
+
+      if (
+        data.refresh &&
+        data.access &&
+        typeof data.has_phone_number === "boolean"
+      ) {
+        localStorage.setItem("access_token", data.access);
+        localStorage.setItem("refresh_token", data.refresh);
+        console.log("Tokens stored in localStorage", data);
+
+        if (data.has_phone_number) {
+          window.location.href = "/user/home";
+        } else {
+          window.location.href = "/user/phone_num";
+        }
+      } else {
+        throw new Error("Invalid response from backend");
+      }
+    } catch (err) {
+      console.error("Backend error:", err);
+
+      const errorContainer = document.getElementById("error-message");
+      if (errorContainer) {
+        errorContainer.textContent = `An error occurred: ${JSON.stringify(
+          err
+        )}`;
+        errorContainer.style.color = "red";
+      }
+    }
   };
 
-  return <div id="google-login-button"></div>;
+  return (
+    <div>
+      <div id="google-login-button"></div>
+      <div id="error-message" style={{ marginTop: "10px" }}></div>
+    </div>
+  );
 };
 
 export default function LoginPage() {

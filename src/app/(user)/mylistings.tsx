@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import UserLayout from "./layout/userLayout";
-import dummyListings from "../../utils/dummyData";
+import api from "../../api/axios"; // Import the API utility
+import type { Listing } from "../../utils/common";
 
 export default function MyListingsPage() {
   const [showPopup, setShowPopup] = useState(false);
@@ -19,14 +20,23 @@ export default function MyListingsPage() {
   });
   const [charCount, setCharCount] = useState(0);
   const maxDescriptionLength = 200;
-  const [listings, setListings] = useState(dummyListings);
+  const [listings, setListings] = useState<Listing[]>([]);
   const [deletePopup, setDeletePopup] = useState<{
     show: boolean;
     id: string | null;
   }>({ show: false, id: null });
 
   useEffect(() => {
-    setListings(dummyListings);
+    const fetchListings = async () => {
+      try {
+        const response = await api.get("/listings/");
+        setListings(response.data);
+      } catch (error) {
+        console.error("Error fetching listings:", error);
+      }
+    };
+
+    fetchListings();
   }, []);
 
   const handleInputChange = (
@@ -60,36 +70,38 @@ export default function MyListingsPage() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (charCount > maxDescriptionLength || !formData.title || !formData.year) {
+      alert("Listing couldn't be added. Please try again.");
       return;
     }
 
-    // Add the new listing to the list
-    setListings((prev) => [
-      ...prev,
-      {
-        id: `${Date.now()}`, // Generate a unique ID
-        name: "Default Name", // Default name
-        phone: "000-000-0000", // Default phone number
+    try {
+      // Fetch user profile data
+      const profileResponse = await api.get("/auth/profile/");
+      const { first_name, last_name, phone_number } = profileResponse.data;
+
+      // Send POST request to add listing
+      const postResponse = await api.post("/listings/", {
+        name: `${first_name} ${last_name}`,
+        phone: phone_number,
         title: formData.title,
         description: formData.description,
         tags: formData.tags,
         year: formData.year,
         negotiable: formData.negotiable,
-      },
-    ]);
+      });
 
-    alert("Listing successfully added!");
-    setShowPopup(false);
+      // Add the new listing to the list
+      setListings((prev) => [...prev, postResponse.data]);
 
-    // Simulate POST request (commented out)
-    // fetch('/api/listings', {
-    //   method: 'POST',
-    //   body: JSON.stringify(formData),
-    //   headers: { 'Content-Type': 'application/json' },
-    // });
+      alert("Listing successfully added!");
+      setShowPopup(false);
+    } catch (error) {
+      console.error("Error adding listing:", error);
+      alert("Listing couldn't be added. Please try again.");
+    }
   };
 
   const handleDelete = (id: string) => {

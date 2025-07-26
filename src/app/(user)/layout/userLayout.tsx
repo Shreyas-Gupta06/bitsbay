@@ -29,7 +29,7 @@ export default function UserLayout({
         </a>
         <button
           onClick={() => setDrawerOpen(true)}
-          className="text-[#ffff00] text-2xl touchable-opacity"
+          className="relative flex items-center justify-center w-10 h-10 bg-white rounded-full text-black text-2xl touchable-opacity"
         >
           ☰
         </button>

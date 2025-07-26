@@ -7,6 +7,13 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     open: true,
+    proxy: {
+      '/api': {
+        target: 'https://books.srijansahay05.in',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
   },
   build: {
     rollupOptions: {

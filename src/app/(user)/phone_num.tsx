@@ -1,26 +1,39 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../../api/axios";
 
 export default function PhoneNumber() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const trimmedNumber = phoneNumber.trim();
     const numericPhone = parseInt(trimmedNumber, 10);
 
     if (!isNaN(numericPhone) && trimmedNumber.length === 10) {
       setErrorMessage("");
-      // Commented backend post logic
-      // fetch("/api/phone", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({ phone: numericPhone }),
-      // });
 
-      navigate("/user/home");
+      try {
+        const response = await api.put("/auth/profile/", {
+          phone_number: numericPhone, // Send phone number as an integer
+        });
+
+        if (
+          response.data &&
+          response.data.phone_number === trimmedNumber &&
+          response.data.id &&
+          response.data.email
+        ) {
+          navigate("/user/home");
+        } else {
+          throw new Error("Invalid response from server");
+        }
+      } catch (error) {
+        console.error("Error updating phone number:", error);
+        setErrorMessage("Failed to update phone number. Please try again.");
+      }
     } else {
       setErrorMessage("Please enter a valid 10-digit phone number.");
     }

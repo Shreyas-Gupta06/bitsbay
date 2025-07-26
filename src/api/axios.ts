@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { BACKEND_URL } from '../utils/common';
-import { logoutUser } from './logout'; // 🔁 Use centralized logout
+import { logoutUser } from './logout'; // Ensure logoutUser is correctly imported and used
 
 const api = axios.create({
   baseURL: BACKEND_URL,
@@ -12,9 +12,11 @@ const api = axios.create({
 // 🔄 Request Interceptor — Attach access token
 api.interceptors.request.use(
   (config) => {
-    const accessToken = localStorage.getItem('accessToken');
+    const accessToken = localStorage.getItem('access_token');
     if (accessToken && config?.headers) {
       config.headers['Authorization'] = `Bearer ${accessToken}`;
+      console.log("Request being made:");
+      console.log("Access token attached:", accessToken);
     }
     return config;
   },
@@ -34,16 +36,20 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const refreshToken = localStorage.getItem('refreshToken');
+        const refreshToken = localStorage.getItem('refresh_token');
+        console.log("Refresh token being sent:", refreshToken);
         const res = await axios.post(
-          `${BACKEND_URL}/auth/refresh-token/`,
-          { refreshToken }
+          `${BACKEND_URL}auth/token/refresh/`,
+          { refresh: refreshToken } // Send refresh token in the body
         );
 
-        const newAccessToken = res.data.accessToken;
-        localStorage.setItem('accessToken', newAccessToken);
+        console.log("Response from token refresh:", res.data);
+        const newAccessToken = res.data.access_token;
+        localStorage.setItem('access_token', newAccessToken);
+        console.log("New access token stored:", newAccessToken);
 
         originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+        console.log("Retrying original request with new access token:", originalRequest);
         return api(originalRequest);
       } catch (err) {
         console.error('Token refresh failed:', err);
