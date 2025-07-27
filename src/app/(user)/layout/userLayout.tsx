@@ -75,8 +75,8 @@ export default function UserLayout({
               href="/user/mylistings"
               className="text-black font-bold text-xl flex items-center gap-2"
             >
-              <IonIcon icon={addOutline} className="w-5 h-5" />
-              Add Listings
+              <IonIcon icon={createOutline} className="w-5 h-5" />
+              My Listings
             </a>
             <hr className="border-gray-300 w-full" />
             <a

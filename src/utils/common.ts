@@ -11,7 +11,7 @@ export const isLoggedIn = () => {
   }
 };
 
-export const BACKEND_URL = "https://buysell.srijansahay05.in/api";
+export const BACKEND_URL = "http://localhost/api";
 
 export interface Listing {
   id: string;
@@ -20,8 +20,11 @@ export interface Listing {
   description: string;
   tags: string[];
   negotiable: boolean;
+  is_negotiable: boolean;
   phone: string;
   year: string;
+  email: string;
+  status: string;
 }
 
 export const predefinedTags = [

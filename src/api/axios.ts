@@ -53,9 +53,19 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (err) {
         console.error('Token refresh failed:', err);
+        const errorAny = err as any;
+        if (errorAny.response) {
+          console.error('Backend refresh error response:', errorAny.response.data);
+        }
         logoutUser(); // ✅ call the centralized logout handler
         return Promise.reject(err);
       }
+    }
+
+    if (error.response) {
+      console.error('Backend API error:', error.response.data);
+    } else {
+      console.error('API error:', error);
     }
 
     return Promise.reject(error);
