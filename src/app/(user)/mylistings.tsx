@@ -165,8 +165,18 @@ export default function MyListingsPage() {
       setTimeout(() => {
         window.location.reload();
       }, 500);
-    } catch (error) {
-      alert("Listing couldn't be added. Please try again.");
+    } catch (error: any) {
+      // Handle backend validation errors
+      if (error.response && error.response.data && error.response.data.price) {
+        const priceError = error.response.data.price[0];
+        if (priceError.includes("greater than or equal to 0")) {
+          alert("Price must be a positive value.");
+        } else {
+          alert("Invalid price format. Please enter a valid price.");
+        }
+      } else {
+        alert("Listing couldn't be added. Please try again.");
+      }
     }
   };
 
@@ -210,11 +220,18 @@ export default function MyListingsPage() {
   };
 
   const handleEdit = (listing: Listing) => {
+    // Ensure tags are properly parsed as an array
+    const tagsArray = Array.isArray(listing.tags) 
+      ? listing.tags 
+      : typeof listing.tags === "string" 
+        ? (listing.tags as string).split(",").map((tag: string) => tag.trim()).filter((tag: string) => tag.length > 0)
+        : [];
+        
     setEditFormData({
       id: listing.id,
       title: listing.title,
       description: listing.description,
-      tags: listing.tags,
+      tags: tagsArray,
       year: listing.year,
       negotiable: listing.negotiable,
       price: listing.price,
@@ -247,8 +264,18 @@ export default function MyListingsPage() {
       );
       alert("Listing updated successfully!");
       setShowEditPopup(false);
-    } catch (error) {
-      alert("Listing couldn't be updated. Please try again.");
+    } catch (error: any) {
+      // Handle backend validation errors
+      if (error.response && error.response.data && error.response.data.price) {
+        const priceError = error.response.data.price[0];
+        if (priceError.includes("greater than or equal to 0")) {
+          alert("Price must be a positive value.");
+        } else {
+          alert("Invalid price format. Please enter a valid price.");
+        }
+      } else {
+        alert("Listing couldn't be updated. Please try again.");
+      }
     }
   };
 

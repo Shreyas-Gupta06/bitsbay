@@ -31,7 +31,7 @@ export const predefinedTags = [
   "notes",
   "slides",
   "pyqs",
-  "all tables (thermo, pns)",
+  "all tables (thermo & pns)",
   "lab coat",
   "calculator",
 ];
