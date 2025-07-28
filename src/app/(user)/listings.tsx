@@ -86,7 +86,7 @@ export default function ListingsPage() {
                 // console.log(`Selected filter: ${e.target.value}`);
                 setFilter(e.target.value);
               }}
-              className="border border-gray-300 rounded-md px-1 py-0.5 text-xs text-[#123924] sm:px-2 sm:py-1 sm:text-sm"
+              className="border border-gray-300 rounded-md px-1 py-0.5 text-[10px] sm:text-xs text-[#123924] sm:px-2 sm:py-1"
             >
               <option value="all">All</option>
               <option value="1st yr">1st Year</option>
@@ -106,7 +106,7 @@ export default function ListingsPage() {
                 // console.log(`Selected status filter: ${e.target.value}`);
                 setStatusFilter(e.target.value);
               }}
-              className="border border-gray-300 rounded-md px-1 py-0.5 text-xs text-[#123924] sm:px-2 sm:py-1 sm:text-sm"
+              className="border border-gray-300 rounded-md px-1 py-0.5 text-[10px] sm:text-xs text-[#123924] sm:px-2 sm:py-1"
             >
               <option value="all">All</option>
               <option value="available">Available</option>
