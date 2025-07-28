@@ -29,6 +29,10 @@ function App() {
     );
   }
 
+  function ProtectedRoute({ children }: { children: React.ReactNode }) {
+    return isLoggedIn() ? children : <Navigate to="/auth/login" />;
+  }
+
   return (
     <Routes>
       {/* Auth Layout */}
@@ -38,12 +42,54 @@ function App() {
 
       {/* App Layout (only after login) */}
       <Route>
-        <Route path="/user/developers" element={<Developers />} />
-        <Route path="/user/home" element={<Home />} />
-        <Route path="/user/phone_num" element={<PhoneNumber />} />
-        <Route path="/user/profile" element={<Profile />} />
-        <Route path="/user/listings" element={<ListingsPage />} />
-        <Route path="/user/mylistings" element={<MyListingsPage />} />
+        <Route
+          path="/user/developers"
+          element={
+            <ProtectedRoute>
+              <Developers />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/user/home"
+          element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/user/phone_num"
+          element={
+            <ProtectedRoute>
+              <PhoneNumber />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/user/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/user/listings"
+          element={
+            <ProtectedRoute>
+              <ListingsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/user/mylistings"
+          element={
+            <ProtectedRoute>
+              <MyListingsPage />
+            </ProtectedRoute>
+          }
+        />
         {/* other protected routes */}
       </Route>
     </Routes>

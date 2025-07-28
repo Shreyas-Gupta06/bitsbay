@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import UserLayout from "./layout/userLayout";
 import api from "../../api/axios"; // Import the API utility
+import { predefinedTags } from "../../utils/common";
 import type { Listing } from "../../utils/common";
 
 export default function MyListingsPage() {
@@ -19,7 +20,7 @@ export default function MyListingsPage() {
     negotiable: false,
   });
   const [charCount, setCharCount] = useState(0);
-  const maxDescriptionLength = 1000;
+  const maxDescriptionLength = 190;
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [listings, setListings] = useState<Listing[]>([]);
@@ -31,8 +32,9 @@ export default function MyListingsPage() {
   useEffect(() => {
     const fetchListings = async () => {
       try {
-        const response = await api.get(`/listings/my_listings/?page=${currentPage}`);
-        console.log("My Listings API response:", response.data); // <-- Added for debugging
+        const response = await api.get(
+          `/listings/my_listings/?page=${currentPage}`
+        );
         const data = response.data;
         let listingsArray = [];
         if (Array.isArray(data)) {
@@ -41,13 +43,14 @@ export default function MyListingsPage() {
           listingsArray = data.results;
         } else if (data && typeof data === "object") {
           listingsArray = Object.keys(data)
-            .filter(key => key.startsWith("item_"))
-            .map(key => data[key]);
+            .filter((key) => key.startsWith("item_"))
+            .map((key) => data[key]);
         }
         setListings(listingsArray);
         setTotalPages(data.total_pages || 1);
       } catch (error) {
         console.error("Error fetching listings:", error);
+        alert("An error occurred. Please logout and sign in again.");
       }
     };
     fetchListings();
@@ -100,7 +103,8 @@ export default function MyListingsPage() {
         year: formData.year,
         negotiable: formData.negotiable,
       };
-      if ((formData as any).price) payload.price = parseInt((formData as any).price, 10);
+      if ((formData as any).price)
+        payload.price = parseInt((formData as any).price, 10);
 
       const postResponse = await api.post("/listings/", payload);
       setListings((prev) => [...prev, postResponse.data]);
@@ -172,10 +176,10 @@ export default function MyListingsPage() {
               className="bg-[#f0f4f8] rounded-lg shadow-md p-3 sm:p-4 h-[300px] sm:h-[350px] overflow-hidden w-[300px] mx-2 flex flex-col justify-between relative"
             >
               {/* Action buttons at top */}
-              <div className="absolute top-2 right-2 flex flex-col gap-2 z-10">
+              <div className="absolute top-2 right-2 flex flex-col gap-2 z-0">
                 {!deletePopup.show && (
                   <button
-                    className="px-3 py-1 rounded-md bg-red-500 text-white hover:bg-red-600 text-sm font-medium shadow-sm transition-colors"
+                    className="px-2 py-1 rounded-md bg-red-500 text-white hover:bg-red-600 text-xs font-medium shadow-sm transition-colors"
                     onClick={() => handleDelete(listing.id)}
                   >
                     Delete
@@ -185,29 +189,35 @@ export default function MyListingsPage() {
 
               {/* Status control at top left */}
               {!deletePopup.show && (
-                <div className="absolute top-2 left-2 z-10">
-                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-1">
-                    <label className="block text-xs text-gray-600 mb-1">Status:</label>
+                <div className="absolute top-2 left-2 z-0">
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-0.5">
+                    <label className="block text-[10px] text-gray-600 mb-0.5">
+                      Status:
+                    </label>
                     <select
-                      value={listing.status || 'available'}
-                      onChange={(e) => handleStatusChange(listing.id, e.target.value)}
-                      className={`px-2 py-1 rounded-md text-xs font-medium border-0 cursor-pointer ${
-                        (listing.status || 'available').toLowerCase() === 'available'
-                          ? 'bg-green-500 text-white'
-                          : 'bg-red-500 text-white'
-                      }`}
+                      value={listing.status || "available"}
+                      onChange={(e) =>
+                        handleStatusChange(listing.id, e.target.value)
+                      }
+                      className="px-1 py-0.5 rounded-md text-[10px] font-medium border cursor-pointer bg-gray-200"
+                      style={{ maxHeight: "80px" }}
                     >
-                      <option value="available">Available</option>
-                      <option value="sold">Sold</option>
+                      <option value="available" className="bg-gray-200">
+                        Available
+                      </option>
+                      <option value="sold" className="bg-gray-200">
+                        Sold
+                      </option>
                     </select>
                   </div>
                 </div>
               )}
+
               <div className="flex-1 overflow-hidden flex flex-col mt-12">
                 <h2 className="text-[#123924] text-sm sm:text-md font-semibold mb-1">
                   {listing.title}
                 </h2>
-                <p className="text-gray-600 text-xs sm:text-sm overflow-hidden text-ellipsis line-clamp-4 mb-2">
+                <p className="text-gray-600 text-xs sm:text-sm overflow-hidden break-words line-clamp-4 mb-2">
                   {listing.description.slice(0, 150)}
                 </p>
                 {/* Tags in one line */}
@@ -215,9 +225,9 @@ export default function MyListingsPage() {
                   {/* Tags */}
                   {(Array.isArray(listing.tags)
                     ? listing.tags
-                    : typeof listing.tags === 'string'
-                      ? (listing.tags as string).split(',').map((t) => t.trim())
-                      : []
+                    : typeof listing.tags === "string"
+                    ? (listing.tags as string).split(",").map((t) => t.trim())
+                    : []
                   ).map((tag: string) => (
                     <span
                       key={tag}
@@ -242,14 +252,15 @@ export default function MyListingsPage() {
                 {/* Availability status in separate row */}
                 {listing.status && (
                   <div className="flex justify-center mb-2">
-                    <span 
+                    <span
                       className={`text-xs sm:text-sm px-3 py-1 rounded-lg font-semibold shadow-sm ${
-                        listing.status.toLowerCase() === 'available' 
-                          ? 'bg-green-500 text-white' 
-                          : 'bg-red-500 text-white'
+                        listing.status.toLowerCase() === "available"
+                          ? "bg-green-500 text-white"
+                          : "bg-red-500 text-white"
                       }`}
                     >
-                      {listing.status.charAt(0).toUpperCase() + listing.status.slice(1)}
+                      {listing.status.charAt(0).toUpperCase() +
+                        listing.status.slice(1)}
                     </span>
                   </div>
                 )}
@@ -294,58 +305,50 @@ export default function MyListingsPage() {
         </div>
 
         {showPopup && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-90 no-scroll z-50">
-            <div className="bg-gray-800 p-6 rounded shadow-lg text-white">
+          <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-95 no-scroll z-50">
+            <div className="bg-[#f0f4f8] p-6 rounded shadow-lg text-[#123924]">
               <form onSubmit={handleSubmit}>
-                <label className="block mb-4 text-lg text-white">
+                <label className="block mb-4 text-lg text-[#123924]">
                   Title:
                   <input
                     type="text"
                     name="title"
                     value={formData.title}
                     onChange={handleInputChange}
-                    className="border rounded px-2 py-1 w-full bg-gray-700 text-white"
+                    className="border rounded px-2 py-1 w-full bg-white text-[#123924]"
                     required
                   />
                 </label>
-                <label className="block mb-4 text-lg text-white">
+                <label className="block mb-4 text-lg text-[#123924]">
                   Description:
                   <textarea
                     name="description"
                     value={formData.description}
                     onChange={handleInputChange}
                     maxLength={maxDescriptionLength}
-                    className="border rounded px-2 py-1 w-full bg-gray-700 text-white"
+                    className="border rounded px-2 py-1 w-full bg-white text-[#123924]"
                     required
                   />
                   <p
                     className={
                       charCount > maxDescriptionLength
                         ? "text-red-500"
-                        : "text-gray-300"
+                        : "text-gray-500"
                     }
                   >
                     {charCount}/{maxDescriptionLength} characters
                   </p>
                 </label>
-                <div className="tags mb-4">
-                  <p className="text-white">Select Tags:</p>
-                  {[
-                    "book",
-                    "notes",
-                    "slides",
-                    "pyqs",
-                    "all tables (thermo, pns)",
-                    "lab coat",
-                    "calculator",
-                  ].map((tag) => (
+                <div className="tags mb-6">
+                  <p className="text-[#123924]">Select Tags:</p>
+                  {predefinedTags.map((tag) => (
                     <button
                       type="button"
                       key={tag}
-                      className={`px-2 py-1 rounded-full border mx-2 ${
+                      className={`px-2 py-1 rounded-full border mx-2 mb-2 ${
                         formData.tags.includes(tag)
                           ? "bg-yellow-500 text-black"
-                          : "bg-gray-700 text-white"
+                          : "bg-[#f0f4f8] text-[#123924]"
                       }`}
                       onClick={() => handleTagSelection(tag)}
                     >
@@ -353,16 +356,18 @@ export default function MyListingsPage() {
                     </button>
                   ))}
                 </div>
-                <div className="year-tags mb-4">
-                  <p className="text-white">Select Year you are selling to:</p>
+                <div className="year-tags mb-6">
+                  <p className="text-[#123924]">
+                    Select Year you are selling to:
+                  </p>
                   {["1st yr", "2nd yr", "3rd yr", "4th yr"].map((year) => (
                     <button
                       type="button"
                       key={year}
-                      className={`px-2 py-1 rounded-full border mx-2 ${
+                      className={`px-2 py-1 rounded-full border mx-2 mb-2 ${
                         formData.year === year
                           ? "bg-blue-300 text-black"
-                          : "bg-gray-700 text-white"
+                          : "bg-[#f0f4f8] text-[#123924]"
                       }`}
                       onClick={() => handleYearSelection(year)}
                     >
@@ -370,14 +375,14 @@ export default function MyListingsPage() {
                     </button>
                   ))}
                 </div>
-                <label className="mb-4 text-lg text-white flex items-center">
+                <label className="mb-4 text-lg text-[#123924] flex items-center">
                   Negotiable:
                   <input
                     type="checkbox"
                     name="negotiable"
                     checked={formData.negotiable}
                     onChange={handleInputChange}
-                    className="ml-2 w-6 h-6 bg-gray-700 text-white mt-1"
+                    className="ml-2 w-6 h-6 bg-white text-[#123924] mt-1"
                   />
                 </label>
                 <button
@@ -410,8 +415,8 @@ export default function MyListingsPage() {
         )}
 
         {deletePopup.show && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-90 no-scroll">
-            <div className="bg-gray-800 p-6 rounded shadow-lg text-white">
+          <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-95 no-scroll z-50">
+            <div className="bg-[#f0f4f8] p-6 rounded shadow-lg text-[#123924]">
               <p className="text-lg mb-4">Are you sure you want to delete?</p>
               <button
                 className="px-4 py-2 rounded bg-green-500 text-white text-lg hover:bg-green-600"

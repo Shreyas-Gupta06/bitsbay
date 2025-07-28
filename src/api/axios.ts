@@ -39,16 +39,17 @@ api.interceptors.response.use(
         const refreshToken = localStorage.getItem('refresh_token');
         console.log("Refresh token being sent:", refreshToken);
         const res = await axios.post(
-          `${BACKEND_URL}auth/token/refresh/`,
+          `${BACKEND_URL}/auth/token/refresh/`,
           { refresh: refreshToken } // Send refresh token in the body
         );
 
         console.log("Response from token refresh:", res.data);
-        const newAccessToken = res.data.access_token;
-        localStorage.setItem('access_token', newAccessToken);
-        console.log("New access token stored:", newAccessToken);
+        localStorage.setItem('access_token', res.data.access);
+        localStorage.setItem('refresh_token', res.data.refresh);
+        console.log("New access token stored:", res.data.access);
+        console.log("New refresh token stored:", res.data.refresh);
 
-        originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+        originalRequest.headers['Authorization'] = `Bearer ${res.data.access}`;
         console.log("Retrying original request with new access token:", originalRequest);
         return api(originalRequest);
       } catch (err) {
@@ -57,7 +58,7 @@ api.interceptors.response.use(
         if (errorAny.response) {
           console.error('Backend refresh error response:', errorAny.response.data);
         }
-        logoutUser(); // ✅ call the centralized logout handler
+         // ✅ call the centralized logout handler
         return Promise.reject(err);
       }
     }

@@ -58,25 +58,6 @@ export default function Profile() {
     }
   };
 
-  const handleAddListing = async (listingData) => {
-    try {
-      const profileResponse = await api.get("/auth/profile/");
-      const { first_name, last_name, phone_number } = profileResponse.data;
-
-      const response = await api.post("/listings/", {
-        ...listingData,
-        name: `${first_name} ${last_name}`,
-        phone: phone_number,
-      });
-
-      alert("Listing added successfully!");
-      setListings((prev) => [...prev, response.data]);
-    } catch (error) {
-      console.error("Error adding listing:", error);
-      alert("Listing couldn't be added. Please try again.");
-    }
-  };
-
   return (
     <UserLayout className="no-scroll">
       <div className="text-center">

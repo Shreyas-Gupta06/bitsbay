@@ -25,25 +25,30 @@ export default function ListingsPage() {
           listingsArray = data.results;
         } else if (data && typeof data === "object") {
           listingsArray = Object.keys(data)
-            .filter(key => key.startsWith("item_"))
-            .map(key => data[key]);
+            .filter((key) => key.startsWith("item_"))
+            .map((key) => data[key]);
         }
         setListings(listingsArray);
         setTotalPages(data.total_pages || 1);
       } catch (error) {
         console.error("Error fetching listings:", error);
+        alert("An error occurred. Please logout and sign in again.");
       }
     };
     fetchListings();
   }, [currentPage]);
 
   const filteredListings = listings.filter((listing) => {
-    const yearMatch = filter === "all" || 
-      (listing.year && listing.year.trim().toLowerCase() === filter.trim().toLowerCase());
-    
-    const statusMatch = statusFilter === "all" || 
-      (listing.status && listing.status.toLowerCase() === statusFilter.toLowerCase());
-    
+    const yearMatch =
+      filter === "all" ||
+      (listing.year &&
+        listing.year.trim().toLowerCase() === filter.trim().toLowerCase());
+
+    const statusMatch =
+      statusFilter === "all" ||
+      (listing.status &&
+        listing.status.toLowerCase() === statusFilter.toLowerCase());
+
     return yearMatch && statusMatch;
   });
 
@@ -68,15 +73,20 @@ export default function ListingsPage() {
       <div className="flex justify-between items-center mb-4 px-4">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <IonIcon icon={funnelOutline} className="w-6 h-6 text-[#123924]" />
-            <span className="text-[#123924] font-medium">Year Filter:</span>
+            <IonIcon
+              icon={funnelOutline}
+              className="w-4 h-4 text-[#123924] sm:w-6 sm:h-6"
+            />
+            <span className="text-[#123924] font-medium text-sm sm:text-base">
+              Year Filter:
+            </span>
             <select
               value={filter}
               onChange={(e) => {
                 console.log(`Selected filter: ${e.target.value}`);
                 setFilter(e.target.value);
               }}
-              className="border border-gray-300 rounded-md px-2 py-1 text-sm text-[#123924]"
+              className="border border-gray-300 rounded-md px-1 py-0.5 text-xs text-[#123924] sm:px-2 sm:py-1 sm:text-sm"
             >
               <option value="all">All</option>
               <option value="1st yr">1st Year</option>
@@ -85,16 +95,18 @@ export default function ListingsPage() {
               <option value="4th yr">4th Year</option>
             </select>
           </div>
-          
+
           <div className="flex items-center gap-2">
-            <span className="text-[#123924] font-medium">Status Filter:</span>
+            <span className="text-[#123924] font-medium text-sm sm:text-base">
+              Status Filter:
+            </span>
             <select
               value={statusFilter}
               onChange={(e) => {
                 console.log(`Selected status filter: ${e.target.value}`);
                 setStatusFilter(e.target.value);
               }}
-              className="border border-gray-300 rounded-md px-2 py-1 text-sm text-[#123924]"
+              className="border border-gray-300 rounded-md px-1 py-0.5 text-xs text-[#123924] sm:px-2 sm:py-1 sm:text-sm"
             >
               <option value="all">All</option>
               <option value="available">Available</option>
@@ -104,80 +116,71 @@ export default function ListingsPage() {
         </div>
       </div>
 
-      <main className="flex-1 bg-white px-4 py-6 grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+      <main className="flex-1 bg-white px-4 py-6 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 auto-rows-[minmax(250px,_auto)]">
         {paginatedListings.map((listing) => (
           <div
             key={listing.id}
-            className="bg-[#f0f4f8] rounded-lg shadow-md flex flex-col justify-between h-[350px] w-full min-w-[220px] max-w-[340px] mx-auto p-4 transition-all duration-200"
+            className="bg-[#f0f4f8] rounded-lg shadow-md p-3 sm:p-4 flex flex-col h-[250px] sm:h-[300px] overflow-hidden"
           >
-            <div className="flex-1 overflow-hidden flex flex-col justify-between">
-              <h2 className="text-[#123924] text-base sm:text-lg font-semibold mb-1 truncate">
+            <div className="flex-1 overflow-hidden">
+              <h2 className="text-[#123924] text-sm sm:text-lg font-semibold">
                 {listing.title}
               </h2>
-              <p className="text-gray-600 text-xs sm:text-sm overflow-hidden text-ellipsis line-clamp-5 mb-2">
+              <p className="text-gray-600 text-xs sm:text-base overflow-hidden break-words line-clamp-6">
                 {listing.description.slice(0, 200)}
               </p>
-              <div className="flex flex-wrap gap-1 mb-2">
+            </div>
+            <div>
+              <div className="flex flex-wrap gap-0.5 sm:gap-2 mt-1">
                 {listing.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="bg-green-200 text-green-800 text-[10px] sm:text-xs px-2 py-0.5 rounded-full"
+                    className="bg-green-200 text-green-800 text-[10px] sm:text-sm px-1 sm:px-3 py-0.5 sm:py-1 rounded-full"
                   >
                     {tag}
                   </span>
                 ))}
                 {listing.year && (
-                  <span className="bg-blue-200 text-blue-800 text-[10px] sm:text-xs px-2 py-0.5 rounded-full">
+                  <span className="bg-blue-200 text-blue-800 text-[10px] sm:text-sm px-1 sm:px-3 py-0.5 sm:py-1 rounded-full">
                     {listing.year}
                   </span>
                 )}
-                {(listing.negotiable || listing.is_negotiable) && (
-                  <span className="bg-yellow-200 text-yellow-800 text-[10px] sm:text-xs px-2 py-0.5 rounded-full">
+                {listing.negotiable && (
+                  <span className="bg-yellow-200 text-yellow-800 text-[10px] sm:text-sm px-1 sm:px-3 py-0.5 sm:py-1 rounded-full">
                     Negotiable
                   </span>
                 )}
               </div>
-              {/* Availability status in separate row */}
-              {listing.status && (
-                <div className="flex justify-center mb-2">
-                  <span 
-                    className={`text-xs sm:text-sm px-3 py-1 rounded-lg font-semibold shadow-sm ${
-                      listing.status.toLowerCase() === 'available' 
-                        ? 'bg-green-500 text-white' 
-                        : 'bg-red-500 text-white'
+              <div className="mt-1 flex items-center gap-0.5 sm:gap-2">
+                <span className="text-[#123924] text-[10px] sm:text-sm font-bold">
+                  {listing.name}
+                </span>
+                {listing.status && (
+                  <span
+                    className={`text-[10px] sm:text-sm px-2 py-0.5 rounded-md font-medium shadow-sm ${
+                      listing.status.toLowerCase() === "available"
+                        ? "bg-green-700 text-white" // Slightly different green
+                        : "bg-red-500 text-white"
                     }`}
                   >
-                    {listing.status.charAt(0).toUpperCase() + listing.status.slice(1)}
+                    {listing.status.charAt(0).toUpperCase() +
+                      listing.status.slice(1)}
                   </span>
-                </div>
-              )}
-            </div>
-            <div>
-              <div className="flex items-center gap-1 mb-1">
-                <span className="text-[#123924] text-xs font-bold truncate">
-                  Seller: {listing.name}
-                </span>
+                )}
               </div>
-              <div className="flex items-center gap-1 mb-1">
+              <div className="mt-1 flex items-center gap-1">
                 <a
                   href={`https://api.whatsapp.com/send?phone=${listing.phone}`}
-                  className="bg-green-500 text-white text-xs font-medium hover:bg-green-600 flex items-center gap-1 px-3 py-1 rounded-md w-full justify-center"
+                  className="bg-green-500 text-white text-[10px] sm:text-sm font-medium hover:bg-green-600 flex items-center gap-1 px-2 sm:px-4 py-1 sm:py-2 rounded-md"
                 >
                   <img
                     src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
                     alt="WhatsApp"
-                    className="w-5 h-5"
+                    className="w-4 sm:w-6 h-4 sm:h-6"
                   />
                   Contact {listing.phone} on WhatsApp
                 </a>
               </div>
-              {listing.email && (
-                <div className="flex items-center gap-1 justify-center mt-1">
-                  <span className="bg-purple-200 text-purple-800 text-xs px-2 py-0.5 rounded-full">
-                    {listing.email}
-                  </span>
-                </div>
-              )}
             </div>
           </div>
         ))}

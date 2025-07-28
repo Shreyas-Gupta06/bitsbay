@@ -11,7 +11,7 @@ export const isLoggedIn = () => {
   }
 };
 
-export const BACKEND_URL = "http://localhost/api";
+export const BACKEND_URL = "http://shreyas.srijansahay05.in/api";
 
 export interface Listing {
   id: string;

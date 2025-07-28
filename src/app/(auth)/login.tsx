@@ -86,14 +86,20 @@ const GoogleLoginButton = () => {
       } else {
         throw new Error("Invalid response from backend");
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Backend error:", err);
 
       const errorContainer = document.getElementById("error-message");
       if (errorContainer) {
-        errorContainer.textContent = `An error occurred: ${JSON.stringify(
-          err
-        )}`;
+        if (!navigator.onLine) {
+          errorContainer.textContent =
+            "No internet connection. Please check your network.";
+        } else if (err.response && err.response.status >= 500) {
+          errorContainer.textContent = "Server error. Please try again later.";
+        } else {
+          errorContainer.textContent =
+            "An unexpected error occurred. Please try again.";
+        }
         errorContainer.style.color = "red";
       }
     }
