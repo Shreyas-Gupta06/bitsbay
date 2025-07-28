@@ -16,6 +16,7 @@ import PhoneNumber from "./app/(user)/phone_num";
 import Profile from "./app/(user)/profile";
 import ListingsPage from "./app/(user)/listings";
 import MyListingsPage from "./app/(user)/mylistings";
+import ErrorPage from "./errorPage";
 
 function App() {
   const location = useLocation();
@@ -91,6 +92,7 @@ function App() {
           }
         />
         {/* other protected routes */}
+        <Route path="*" element={<ErrorPage />} />
       </Route>
     </Routes>
   );

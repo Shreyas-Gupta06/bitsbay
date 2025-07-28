@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { BACKEND_URL } from '../utils/common';
-import { logoutUser } from './logout'; // Ensure logoutUser is correctly imported and used
+// import { logoutUser } from './logout'; // Ensure logoutUser is correctly imported and used
 
 const api = axios.create({
   baseURL: BACKEND_URL,
