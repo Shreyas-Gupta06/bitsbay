@@ -9,7 +9,7 @@ export const isLoggedIn = () => {
   }
 };
 
-export const BACKEND_URL = "http://shreyas.srijansahay05.in/api";
+export const BACKEND_URL = "https://books.enspire2025.in/api";
 
 export interface Listing {
   id: string;
