@@ -31,7 +31,7 @@ export default function ListingsPage() {
         setListings(listingsArray);
         setTotalPages(data.total_pages || 1);
       } catch (error) {
-        console.error("Error fetching listings:", error);
+        // console.error("Error fetching listings:", error);
         alert("An error occurred. Please logout and sign in again.");
       }
     };
@@ -83,7 +83,7 @@ export default function ListingsPage() {
             <select
               value={filter}
               onChange={(e) => {
-                console.log(`Selected filter: ${e.target.value}`);
+                // console.log(`Selected filter: ${e.target.value}`);
                 setFilter(e.target.value);
               }}
               className="border border-gray-300 rounded-md px-1 py-0.5 text-xs text-[#123924] sm:px-2 sm:py-1 sm:text-sm"
@@ -103,7 +103,7 @@ export default function ListingsPage() {
             <select
               value={statusFilter}
               onChange={(e) => {
-                console.log(`Selected status filter: ${e.target.value}`);
+                // console.log(`Selected status filter: ${e.target.value}`);
                 setStatusFilter(e.target.value);
               }}
               className="border border-gray-300 rounded-md px-1 py-0.5 text-xs text-[#123924] sm:px-2 sm:py-1 sm:text-sm"

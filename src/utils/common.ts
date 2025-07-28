@@ -3,10 +3,8 @@ export const isLoggedIn = () => {
   const refreshToken = localStorage.getItem("refresh_token");
 
   if (accessToken && refreshToken) {
-    console.log("Tokens are present.");
     return true;
   } else {
-    console.log("Tokens are missing.");
     return false;
   }
 };

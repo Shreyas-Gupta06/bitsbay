@@ -49,7 +49,7 @@ export default function MyListingsPage() {
         setListings(listingsArray);
         setTotalPages(data.total_pages || 1);
       } catch (error) {
-        console.error("Error fetching listings:", error);
+        // console.error("Error fetching listings:", error);
         alert("An error occurred. Please logout and sign in again.");
       }
     };
@@ -111,7 +111,7 @@ export default function MyListingsPage() {
       alert("Listing successfully added!");
       setShowPopup(false);
     } catch (error) {
-      console.error("Error adding listing:", error);
+      // console.error("Error adding listing:", error);
       alert("Listing couldn't be added. Please try again.");
     }
   };
@@ -129,7 +129,7 @@ export default function MyListingsPage() {
         )
       );
     } catch (error) {
-      console.error("Error updating status:", error);
+      // console.error("Error updating status:", error);
       alert("Failed to update status. Please try again.");
     }
   };
@@ -143,7 +143,7 @@ export default function MyListingsPage() {
       );
       alert("Listing deleted successfully!");
     } catch (error) {
-      console.error("Error deleting listing:", error);
+      // console.error("Error deleting listing:", error);
       alert("Failed to delete listing. Please try again.");
     }
     setDeletePopup({ show: false, id: null });

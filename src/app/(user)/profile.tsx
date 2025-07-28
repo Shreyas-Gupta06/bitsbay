@@ -21,7 +21,7 @@ export default function Profile() {
         setProfileData(response.data);
         setPhoneNumber(response.data.phone_number);
       } catch (error) {
-        console.error("Error fetching profile data:", error);
+        // console.error("Error fetching profile data:", error);
         setErrorMessage("Failed to load profile information.");
       }
     };
@@ -50,7 +50,7 @@ export default function Profile() {
           throw new Error("Invalid response from server");
         }
       } catch (error) {
-        console.error("Error updating phone number:", error);
+        // console.error("Error updating phone number:", error);
         setErrorMessage("Failed to update phone number. Please try again.");
       }
     } else {

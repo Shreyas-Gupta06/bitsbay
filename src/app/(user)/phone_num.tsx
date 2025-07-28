@@ -31,7 +31,7 @@ export default function PhoneNumber() {
           throw new Error("Invalid response from server");
         }
       } catch (error) {
-        console.error("Error updating phone number:", error);
+        // console.error("Error updating phone number:", error);
         setErrorMessage("Failed to update phone number. Please try again.");
       }
     } else {
