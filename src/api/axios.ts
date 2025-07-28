@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { BACKEND_URL } from '../utils/common';
-// import { logoutUser } from './logout'; // Ensure logoutUser is correctly imported and used
+import { logoutUser } from './logout'; // Ensure logoutUser is correctly imported and used
 
 const api = axios.create({
   baseURL: BACKEND_URL,
@@ -58,7 +58,10 @@ api.interceptors.response.use(
         if (errorAny.response) {
           console.error('Backend refresh error response:', errorAny.response.data);
         }
-         // ✅ call the centralized logout handler
+        // Show alert before logging out
+        if (window.confirm("Unauthorized access. Please login again.")) {
+          logoutUser();
+        }
         return Promise.reject(err);
       }
     }
