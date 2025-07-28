@@ -5,9 +5,25 @@ import { predefinedTags } from "../../utils/common";
 import type { Listing } from "../../utils/common";
 
 export default function MyListingsPage() {
-  const [showPopup, setShowPopup] = useState(false);
-  const [formData, setFormData] = useState<{
-    id?: string;
+  const [showAddPopup, setShowAddPopup] = useState(false);
+  const [showEditPopup, setShowEditPopup] = useState(false);
+  const [addFormData, setAddFormData] = useState<{
+    title: string;
+    description: string;
+    tags: string[];
+    year: string;
+    negotiable: boolean;
+    price?: number;
+  }>({
+    title: "",
+    description: "",
+    tags: [],
+    year: "",
+    negotiable: false,
+    price: undefined,
+  });
+  const [editFormData, setEditFormData] = useState<{
+    id: string;
     title: string;
     description: string;
     tags: string[];
@@ -23,8 +39,6 @@ export default function MyListingsPage() {
     negotiable: false,
     price: undefined,
   });
-  const [charCount, setCharCount] = useState(0);
-  const maxDescriptionLength = 190;
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [listings, setListings] = useState<Listing[]>([]);
@@ -32,6 +46,7 @@ export default function MyListingsPage() {
     show: boolean;
     id: string | null;
   }>({ show: false, id: null });
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -60,23 +75,32 @@ export default function MyListingsPage() {
     fetchListings();
   }, [currentPage]);
 
-  const handleInputChange = (
+  const handleAddInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value, type } = e.target;
     const checked =
       type === "checkbox" ? (e.target as HTMLInputElement).checked : undefined;
-    if (name === "description") {
-      setCharCount(value.length);
-    }
-    setFormData({
-      ...formData,
+    setAddFormData({
+      ...addFormData,
       [name]: type === "checkbox" ? checked : value,
     });
   };
 
-  const handleTagSelection = (tag: string) => {
-    setFormData((prev) => ({
+  const handleEditInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value, type } = e.target;
+    const checked =
+      type === "checkbox" ? (e.target as HTMLInputElement).checked : undefined;
+    setEditFormData({
+      ...editFormData,
+      [name]: type === "checkbox" ? checked : value,
+    });
+  };
+
+  const handleAddTagSelection = (tag: string) => {
+    setAddFormData((prev) => ({
       ...prev,
       tags: prev.tags.includes(tag)
         ? prev.tags.filter((t) => t !== tag)
@@ -84,8 +108,24 @@ export default function MyListingsPage() {
     }));
   };
 
-  const handleYearSelection = (year: string) => {
-    setFormData((prev) => ({
+  const handleEditTagSelection = (tag: string) => {
+    setEditFormData((prev) => ({
+      ...prev,
+      tags: prev.tags.includes(tag)
+        ? prev.tags.filter((t) => t !== tag)
+        : [...prev.tags, tag],
+    }));
+  };
+
+  const handleAddYearSelection = (year: string) => {
+    setAddFormData((prev) => ({
+      ...prev,
+      year,
+    }));
+  };
+
+  const handleEditYearSelection = (year: string) => {
+    setEditFormData((prev) => ({
       ...prev,
       year,
     }));
@@ -93,27 +133,26 @@ export default function MyListingsPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (charCount > maxDescriptionLength || !formData.title || !formData.year) {
+    if (!addFormData.title || !addFormData.year) {
       alert("Listing couldn't be added. Please try again.");
       return;
     }
 
     try {
       const payload: any = {
-        title: formData.title,
-        description: formData.description,
-        tags: formData.tags.join(", "),
-        year: formData.year,
-        negotiable: formData.negotiable,
-        price: formData.price,
+        title: addFormData.title,
+        description: addFormData.description,
+        tags: addFormData.tags.join(", "),
+        year: addFormData.year,
+        negotiable: addFormData.negotiable,
+        price: addFormData.price,
       };
 
       const postResponse = await api.post("/listings/", payload);
       setListings((prev) => [...prev, postResponse.data]);
       alert("Listing successfully added!");
-      setShowPopup(false);
-      setFormData({
-        id: "",
+      setShowAddPopup(false);
+      setAddFormData({
         title: "",
         description: "",
         tags: [],
@@ -121,6 +160,11 @@ export default function MyListingsPage() {
         negotiable: false,
         price: undefined,
       });
+      // Show loading animation and refresh after delay
+      setIsRefreshing(true);
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
     } catch (error) {
       alert("Listing couldn't be added. Please try again.");
     }
@@ -152,6 +196,12 @@ export default function MyListingsPage() {
         prev.filter((listing) => listing.id !== deletePopup.id)
       );
       alert("Listing deleted successfully!");
+      setDeletePopup({ show: false, id: null });
+      // Show loading animation and refresh after delay
+      setIsRefreshing(true);
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
     } catch (error) {
       // console.error("Error deleting listing:", error);
       alert("Failed to delete listing. Please try again.");
@@ -160,47 +210,43 @@ export default function MyListingsPage() {
   };
 
   const handleEdit = (listing: Listing) => {
-    setFormData({
+    setEditFormData({
       id: listing.id,
       title: listing.title,
       description: listing.description,
-      tags: Array.isArray(listing.tags)
-        ? listing.tags
-        : typeof listing.tags === "string"
-        ? (listing.tags as string).split(",").map((t: string) => t.trim())
-        : [],
-      year: listing.year || "",
-      negotiable: listing.negotiable || false,
-      price: listing.price || undefined,
+      tags: listing.tags,
+      year: listing.year,
+      negotiable: listing.negotiable,
+      price: listing.price,
     });
-    setShowPopup(true);
+    setShowEditPopup(true);
   };
 
   const handleSubmitEdit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (charCount > maxDescriptionLength || !formData.title || !formData.year) {
+    if (!editFormData.title || !editFormData.year) {
       alert("Listing couldn't be updated. Please try again.");
       return;
     }
 
     try {
       const payload: any = {
-        title: formData.title,
-        description: formData.description,
-        tags: formData.tags.join(", "),
-        year: formData.year,
-        negotiable: formData.negotiable,
-        price: formData.price,
+        title: editFormData.title,
+        description: editFormData.description,
+        tags: editFormData.tags.join(", "),
+        year: editFormData.year,
+        negotiable: editFormData.negotiable,
+        price: editFormData.price,
       };
 
-      const response = await api.patch(`/listings/${formData.id}/`, payload);
+      const response = await api.patch(`/listings/${editFormData.id}/`, payload);
       setListings((prev) =>
         prev.map((item) =>
-          item.id === formData.id ? { ...item, ...response.data } : item
+          item.id === editFormData.id ? { ...item, ...response.data } : item
         )
       );
       alert("Listing updated successfully!");
-      setShowPopup(false);
+      setShowEditPopup(false);
     } catch (error) {
       alert("Listing couldn't be updated. Please try again.");
     }
@@ -214,7 +260,7 @@ export default function MyListingsPage() {
           <h1 className="text-4xl font-bold mb-6.5">My Listings</h1>
           <button
             className="add-listing-btn bg-green-700 text-white px-6 py-3 rounded shadow-lg hover:bg-green-300 hover:text-black text-xl"
-            onClick={() => setShowPopup(true)}
+            onClick={() => setShowAddPopup(true)}
           >
             + Add Listing
           </button>
@@ -375,7 +421,7 @@ export default function MyListingsPage() {
           </button>
         </div>
 
-        {showPopup && !formData.id && (
+        {showAddPopup && (
           <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-95 no-scroll z-50">
             <div className="bg-[#f0f4f8] p-6 rounded shadow-lg text-[#123924] max-w-[90%] max-h-[90%] overflow-auto">
               <form onSubmit={handleSubmit}>
@@ -384,8 +430,8 @@ export default function MyListingsPage() {
                   <input
                     type="text"
                     name="title"
-                    value={formData.title}
-                    onChange={handleInputChange}
+                    value={addFormData.title}
+                    onChange={handleAddInputChange}
                     className="border rounded px-2 py-1 w-full bg-white text-[#123924]"
                     required
                   />
@@ -394,29 +440,19 @@ export default function MyListingsPage() {
                   Description:
                   <textarea
                     name="description"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    maxLength={maxDescriptionLength}
+                    value={addFormData.description}
+                    onChange={handleAddInputChange}
                     className="border rounded px-2 py-1 w-full bg-white text-[#123924]"
                     required
                   />
-                  <p
-                    className={
-                      charCount > maxDescriptionLength
-                        ? "text-red-500"
-                        : "text-gray-500"
-                    }
-                  >
-                    {charCount}/{maxDescriptionLength} characters
-                  </p>
                 </label>
                 <label className="block mb-4 text-lg text-[#123924]">
                   Price (optional):
                   <input
                     type="number"
                     name="price"
-                    value={formData.price || ""}
-                    onChange={handleInputChange}
+                    value={addFormData.price || ""}
+                    onChange={handleAddInputChange}
                     className="border rounded px-2 py-1 w-full bg-white text-[#123924]"
                   />
                 </label>
@@ -427,11 +463,11 @@ export default function MyListingsPage() {
                       type="button"
                       key={tag}
                       className={`px-2 py-1 rounded-full border mx-2 mb-2 ${
-                        formData.tags.includes(tag)
+                        addFormData.tags.includes(tag)
                           ? "bg-yellow-500 text-black"
                           : "bg-[#f0f4f8] text-[#123924]"
                       }`}
-                      onClick={() => handleTagSelection(tag)}
+                      onClick={() => handleAddTagSelection(tag)}
                     >
                       {tag}
                     </button>
@@ -446,11 +482,11 @@ export default function MyListingsPage() {
                       type="button"
                       key={year}
                       className={`px-2 py-1 rounded-full border mx-2 mb-2 ${
-                        formData.year === year
+                        addFormData.year === year
                           ? "bg-blue-300 text-black"
                           : "bg-[#f0f4f8] text-[#123924]"
                       }`}
-                      onClick={() => handleYearSelection(year)}
+                      onClick={() => handleAddYearSelection(year)}
                     >
                       {year}
                     </button>
@@ -461,24 +497,22 @@ export default function MyListingsPage() {
                   <input
                     type="checkbox"
                     name="negotiable"
-                    checked={formData.negotiable}
-                    onChange={handleInputChange}
+                    checked={addFormData.negotiable}
+                    onChange={handleAddInputChange}
                     className="ml-2 w-6 h-6 bg-white text-[#123924] mt-1"
                   />
                 </label>
                 <button
                   type="submit"
                   className={`px-4 py-2 rounded bg-green-500 text-white text-lg ${
-                    charCount > maxDescriptionLength ||
-                    !formData.title ||
-                    !formData.year
+                    !addFormData.title ||
+                    !addFormData.year
                       ? "opacity-50 cursor-not-allowed"
                       : "hover:bg-green-600"
                   }`}
                   disabled={
-                    charCount > maxDescriptionLength ||
-                    !formData.title ||
-                    !formData.year
+                    !addFormData.title ||
+                    !addFormData.year
                   }
                 >
                   Submit
@@ -486,7 +520,7 @@ export default function MyListingsPage() {
                 <button
                   type="button"
                   className="ml-4 px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600 text-lg"
-                  onClick={() => setShowPopup(false)}
+                  onClick={() => setShowAddPopup(false)}
                 >
                   Cancel
                 </button>
@@ -495,7 +529,7 @@ export default function MyListingsPage() {
           </div>
         )}
 
-        {showPopup && formData.id && (
+        {showEditPopup && (
           <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-95 no-scroll z-50">
             <div className="bg-[#f0f4f8] p-6 rounded shadow-lg text-[#123924] max-w-[90%] max-h-[90%] overflow-auto">
               <form onSubmit={handleSubmitEdit}>
@@ -504,8 +538,8 @@ export default function MyListingsPage() {
                   <input
                     type="text"
                     name="title"
-                    value={formData.title}
-                    onChange={handleInputChange}
+                    value={editFormData.title}
+                    onChange={handleEditInputChange}
                     className="border rounded px-2 py-1 w-full bg-white text-[#123924]"
                     required
                   />
@@ -514,29 +548,19 @@ export default function MyListingsPage() {
                   Description:
                   <textarea
                     name="description"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    maxLength={maxDescriptionLength}
+                    value={editFormData.description}
+                    onChange={handleEditInputChange}
                     className="border rounded px-2 py-1 w-full bg-white text-[#123924]"
                     required
                   />
-                  <p
-                    className={
-                      charCount > maxDescriptionLength
-                        ? "text-red-500"
-                        : "text-gray-500"
-                    }
-                  >
-                    {charCount}/{maxDescriptionLength} characters
-                  </p>
                 </label>
                 <label className="block mb-4 text-lg text-[#123924]">
                   Price (optional):
                   <input
                     type="number"
                     name="price"
-                    value={formData.price || ""}
-                    onChange={handleInputChange}
+                    value={editFormData.price || ""}
+                    onChange={handleEditInputChange}
                     className="border rounded px-2 py-1 w-full bg-white text-[#123924]"
                   />
                 </label>
@@ -547,11 +571,11 @@ export default function MyListingsPage() {
                       type="button"
                       key={tag}
                       className={`px-2 py-1 rounded-full border mx-2 mb-2 ${
-                        formData.tags.includes(tag)
+                        editFormData.tags.includes(tag)
                           ? "bg-yellow-500 text-black"
                           : "bg-[#f0f4f8] text-[#123924]"
                       }`}
-                      onClick={() => handleTagSelection(tag)}
+                      onClick={() => handleEditTagSelection(tag)}
                     >
                       {tag}
                     </button>
@@ -566,11 +590,11 @@ export default function MyListingsPage() {
                       type="button"
                       key={year}
                       className={`px-2 py-1 rounded-full border mx-2 mb-2 ${
-                        formData.year === year
+                        editFormData.year === year
                           ? "bg-blue-300 text-black"
                           : "bg-[#f0f4f8] text-[#123924]"
                       }`}
-                      onClick={() => handleYearSelection(year)}
+                      onClick={() => handleEditYearSelection(year)}
                     >
                       {year}
                     </button>
@@ -581,24 +605,22 @@ export default function MyListingsPage() {
                   <input
                     type="checkbox"
                     name="negotiable"
-                    checked={formData.negotiable}
-                    onChange={handleInputChange}
+                    checked={editFormData.negotiable}
+                    onChange={handleEditInputChange}
                     className="ml-2 w-6 h-6 bg-white text-[#123924] mt-1"
                   />
                 </label>
                 <button
                   type="submit"
                   className={`px-4 py-2 rounded bg-green-500 text-white text-lg ${
-                    charCount > maxDescriptionLength ||
-                    !formData.title ||
-                    !formData.year
+                    !editFormData.title ||
+                    !editFormData.year
                       ? "opacity-50 cursor-not-allowed"
                       : "hover:bg-green-600"
                   }`}
                   disabled={
-                    charCount > maxDescriptionLength ||
-                    !formData.title ||
-                    !formData.year
+                    !editFormData.title ||
+                    !editFormData.year
                   }
                 >
                   Submit
@@ -606,7 +628,7 @@ export default function MyListingsPage() {
                 <button
                   type="button"
                   className="ml-4 px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600 text-lg"
-                  onClick={() => setShowPopup(false)}
+                  onClick={() => setShowEditPopup(false)}
                 >
                   Cancel
                 </button>
@@ -631,6 +653,16 @@ export default function MyListingsPage() {
               >
                 No
               </button>
+            </div>
+          </div>
+        )}
+
+        {/* Loading overlay during refresh */}
+        {isRefreshing && (
+          <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-90 z-50">
+            <div className="flex flex-col items-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mb-4"></div>
+              <p className="text-lg text-gray-700">Refreshing...</p>
             </div>
           </div>
         )}
