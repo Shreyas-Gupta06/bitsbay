@@ -29,6 +29,17 @@ export default function Developers() {
               className="w-12 h-12"
             />
           </a>
+          <a
+            href="https://www.instagram.com/shreyasgupta21"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png"
+              alt="Instagram"
+              className="w-12 h-12"
+            />
+          </a>
         </div>
       </div>
 
@@ -61,6 +72,17 @@ export default function Developers() {
             <img
               src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Linkedin_icon.svg"
               alt="LinkedIn"
+              className="w-12 h-12"
+            />
+          </a>
+          <a
+            href="https://www.instagram.com/srijansahay05"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png"
+              alt="Instagram"
               className="w-12 h-12"
             />
           </a>
