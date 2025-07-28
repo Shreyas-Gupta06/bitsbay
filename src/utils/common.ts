@@ -23,6 +23,7 @@ export interface Listing {
   year: string;
   email: string;
   status: string;
+  price?: number; // Optional price field
 }
 
 export const predefinedTags = [

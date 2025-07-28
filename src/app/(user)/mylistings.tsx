@@ -7,17 +7,21 @@ import type { Listing } from "../../utils/common";
 export default function MyListingsPage() {
   const [showPopup, setShowPopup] = useState(false);
   const [formData, setFormData] = useState<{
+    id?: string;
     title: string;
     description: string;
     tags: string[];
     year: string;
     negotiable: boolean;
+    price?: number;
   }>({
+    id: "",
     title: "",
     description: "",
     tags: [],
     year: "",
     negotiable: false,
+    price: undefined,
   });
   const [charCount, setCharCount] = useState(0);
   const maxDescriptionLength = 190;
@@ -95,23 +99,29 @@ export default function MyListingsPage() {
     }
 
     try {
-      // Prepare payload according to API docs
       const payload: any = {
         title: formData.title,
         description: formData.description,
         tags: formData.tags.join(", "),
         year: formData.year,
         negotiable: formData.negotiable,
+        price: formData.price,
       };
-      if ((formData as any).price)
-        payload.price = parseInt((formData as any).price, 10);
 
       const postResponse = await api.post("/listings/", payload);
       setListings((prev) => [...prev, postResponse.data]);
       alert("Listing successfully added!");
       setShowPopup(false);
+      setFormData({
+        id: "",
+        title: "",
+        description: "",
+        tags: [],
+        year: "",
+        negotiable: false,
+        price: undefined,
+      });
     } catch (error) {
-      // console.error("Error adding listing:", error);
       alert("Listing couldn't be added. Please try again.");
     }
   };
@@ -149,6 +159,53 @@ export default function MyListingsPage() {
     setDeletePopup({ show: false, id: null });
   };
 
+  const handleEdit = (listing: Listing) => {
+    setFormData({
+      id: listing.id,
+      title: listing.title,
+      description: listing.description,
+      tags: Array.isArray(listing.tags)
+        ? listing.tags
+        : typeof listing.tags === "string"
+        ? (listing.tags as string).split(",").map((t: string) => t.trim())
+        : [],
+      year: listing.year || "",
+      negotiable: listing.negotiable || false,
+      price: listing.price || undefined,
+    });
+    setShowPopup(true);
+  };
+
+  const handleSubmitEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (charCount > maxDescriptionLength || !formData.title || !formData.year) {
+      alert("Listing couldn't be updated. Please try again.");
+      return;
+    }
+
+    try {
+      const payload: any = {
+        title: formData.title,
+        description: formData.description,
+        tags: formData.tags.join(", "),
+        year: formData.year,
+        negotiable: formData.negotiable,
+        price: formData.price,
+      };
+
+      const response = await api.patch(`/listings/${formData.id}/`, payload);
+      setListings((prev) =>
+        prev.map((item) =>
+          item.id === formData.id ? { ...item, ...response.data } : item
+        )
+      );
+      alert("Listing updated successfully!");
+      setShowPopup(false);
+    } catch (error) {
+      alert("Listing couldn't be updated. Please try again.");
+    }
+  };
+
   return (
     <UserLayout>
       <div className="listings-page bg-white">
@@ -178,12 +235,20 @@ export default function MyListingsPage() {
               {/* Action buttons at top */}
               <div className="absolute top-2 right-2 flex flex-col gap-2 z-0">
                 {!deletePopup.show && (
-                  <button
-                    className="px-2 py-1 rounded-md bg-red-500 text-white hover:bg-red-600 text-xs font-medium shadow-sm transition-colors"
-                    onClick={() => handleDelete(listing.id)}
-                  >
-                    Delete
-                  </button>
+                  <>
+                    <button
+                      className="px-2 py-1 rounded-md bg-red-500 text-white hover:bg-red-600 text-xs font-medium shadow-sm transition-colors"
+                      onClick={() => handleDelete(listing.id)}
+                    >
+                      Delete
+                    </button>
+                    <button
+                      className="px-2 py-1 rounded-md bg-blue-500 text-white hover:bg-blue-600 text-xs font-medium shadow-sm transition-colors"
+                      onClick={() => handleEdit(listing)}
+                    >
+                      Edit
+                    </button>
+                  </>
                 )}
               </div>
 
@@ -214,8 +279,14 @@ export default function MyListingsPage() {
               )}
 
               <div className="flex-1 overflow-hidden flex flex-col mt-12">
-                <h2 className="text-[#123924] text-sm sm:text-md font-semibold mb-1">
+                <h2 className="text-[#123924] text-lg sm:text-xl font-semibold flex items-center justify-between">
                   {listing.title}
+                  {listing.price && (
+                    <span className="text-black text-lg sm:text-xl font-medium flex items-center">
+                      <span className="material-icons">₹</span>
+                      {listing.price}
+                    </span>
+                  )}
                 </h2>
                 <p className="text-gray-600 text-xs sm:text-sm overflow-hidden break-words line-clamp-4 mb-2">
                   {listing.description.slice(0, 150)}
@@ -304,9 +375,9 @@ export default function MyListingsPage() {
           </button>
         </div>
 
-        {showPopup && (
+        {showPopup && !formData.id && (
           <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-95 no-scroll z-50">
-            <div className="bg-[#f0f4f8] p-6 rounded shadow-lg text-[#123924]">
+            <div className="bg-[#f0f4f8] p-6 rounded shadow-lg text-[#123924] max-w-[90%] max-h-[90%] overflow-auto">
               <form onSubmit={handleSubmit}>
                 <label className="block mb-4 text-lg text-[#123924]">
                   Title:
@@ -338,6 +409,136 @@ export default function MyListingsPage() {
                   >
                     {charCount}/{maxDescriptionLength} characters
                   </p>
+                </label>
+                <label className="block mb-4 text-lg text-[#123924]">
+                  Price (optional):
+                  <input
+                    type="number"
+                    name="price"
+                    value={formData.price || ""}
+                    onChange={handleInputChange}
+                    className="border rounded px-2 py-1 w-full bg-white text-[#123924]"
+                  />
+                </label>
+                <div className="tags mb-6">
+                  <p className="text-[#123924]">Select Tags:</p>
+                  {predefinedTags.map((tag) => (
+                    <button
+                      type="button"
+                      key={tag}
+                      className={`px-2 py-1 rounded-full border mx-2 mb-2 ${
+                        formData.tags.includes(tag)
+                          ? "bg-yellow-500 text-black"
+                          : "bg-[#f0f4f8] text-[#123924]"
+                      }`}
+                      onClick={() => handleTagSelection(tag)}
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+                <div className="year-tags mb-6">
+                  <p className="text-[#123924]">
+                    Select Year you are selling to:
+                  </p>
+                  {["1st yr", "2nd yr", "3rd yr", "4th yr"].map((year) => (
+                    <button
+                      type="button"
+                      key={year}
+                      className={`px-2 py-1 rounded-full border mx-2 mb-2 ${
+                        formData.year === year
+                          ? "bg-blue-300 text-black"
+                          : "bg-[#f0f4f8] text-[#123924]"
+                      }`}
+                      onClick={() => handleYearSelection(year)}
+                    >
+                      {year}
+                    </button>
+                  ))}
+                </div>
+                <label className="mb-4 text-lg text-[#123924] flex items-center">
+                  Negotiable:
+                  <input
+                    type="checkbox"
+                    name="negotiable"
+                    checked={formData.negotiable}
+                    onChange={handleInputChange}
+                    className="ml-2 w-6 h-6 bg-white text-[#123924] mt-1"
+                  />
+                </label>
+                <button
+                  type="submit"
+                  className={`px-4 py-2 rounded bg-green-500 text-white text-lg ${
+                    charCount > maxDescriptionLength ||
+                    !formData.title ||
+                    !formData.year
+                      ? "opacity-50 cursor-not-allowed"
+                      : "hover:bg-green-600"
+                  }`}
+                  disabled={
+                    charCount > maxDescriptionLength ||
+                    !formData.title ||
+                    !formData.year
+                  }
+                >
+                  Submit
+                </button>
+                <button
+                  type="button"
+                  className="ml-4 px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600 text-lg"
+                  onClick={() => setShowPopup(false)}
+                >
+                  Cancel
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {showPopup && formData.id && (
+          <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-95 no-scroll z-50">
+            <div className="bg-[#f0f4f8] p-6 rounded shadow-lg text-[#123924] max-w-[90%] max-h-[90%] overflow-auto">
+              <form onSubmit={handleSubmitEdit}>
+                <label className="block mb-4 text-lg text-[#123924]">
+                  Title:
+                  <input
+                    type="text"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleInputChange}
+                    className="border rounded px-2 py-1 w-full bg-white text-[#123924]"
+                    required
+                  />
+                </label>
+                <label className="block mb-4 text-lg text-[#123924]">
+                  Description:
+                  <textarea
+                    name="description"
+                    value={formData.description}
+                    onChange={handleInputChange}
+                    maxLength={maxDescriptionLength}
+                    className="border rounded px-2 py-1 w-full bg-white text-[#123924]"
+                    required
+                  />
+                  <p
+                    className={
+                      charCount > maxDescriptionLength
+                        ? "text-red-500"
+                        : "text-gray-500"
+                    }
+                  >
+                    {charCount}/{maxDescriptionLength} characters
+                  </p>
+                </label>
+                <label className="block mb-4 text-lg text-[#123924]">
+                  Price (optional):
+                  <input
+                    type="number"
+                    name="price"
+                    value={formData.price || ""}
+                    onChange={handleInputChange}
+                    className="border rounded px-2 py-1 w-full bg-white text-[#123924]"
+                  />
                 </label>
                 <div className="tags mb-6">
                   <p className="text-[#123924]">Select Tags:</p>
