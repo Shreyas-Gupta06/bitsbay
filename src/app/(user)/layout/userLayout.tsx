@@ -1,12 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { logoutUser } from "../../../api/logout";
 import { IonIcon } from "@ionic/react";
 import {
   homeOutline,
-  createOutline,
   personOutline,
   logOutOutline,
   addOutline,
+  searchOutline,
+  libraryOutline,
+  chevronUpOutline,
+  chevronDownOutline,
+  documentOutline,
+  pricetagOutline,
 } from "ionicons/icons";
 
 export default function UserLayout({
@@ -17,6 +22,8 @@ export default function UserLayout({
   className?: string;
 }) {
   const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const [listingsDropdownOpen, setListingsDropdownOpen] = useState(false);
+  const [freshersDropdownOpen, setFreshersDropdownOpen] = useState(false);
 
   return (
     <div
@@ -63,21 +70,68 @@ export default function UserLayout({
               Home
             </a>
             <hr className="border-gray-300 w-full" />
-            <a
-              href="/user/listings"
-              className="text-black font-bold text-xl flex items-center gap-2"
-            >
-              <IonIcon icon={createOutline} className="w-5 h-5" />
-              Listings
-            </a>
+            <div className="relative">
+              <button
+                onClick={() => setListingsDropdownOpen(!listingsDropdownOpen)}
+                className="text-black font-bold text-xl flex items-center gap-2 w-full"
+              >
+                <IonIcon icon={libraryOutline} className="w-5 h-5" />
+                Listings
+                <IonIcon
+                  icon={
+                    listingsDropdownOpen ? chevronUpOutline : chevronDownOutline
+                  }
+                  className="w-5 h-5"
+                />
+              </button>
+              {listingsDropdownOpen && (
+                <div className="mt-2 flex flex-col gap-2 pl-6 transition-all duration-300">
+                  <a
+                    href="/user/listings"
+                    className="text-black font-medium text-lg flex items-center gap-2"
+                  >
+                    <IonIcon icon={searchOutline} className="w-5 h-5" />
+                    Browse Listings
+                  </a>
+                  <a
+                    href="/user/mylistings"
+                    className="text-black font-medium text-lg flex items-center gap-2"
+                  >
+                    <IonIcon icon={addOutline} className="w-5 h-5" />
+                    Add Listings
+                  </a>
+                </div>
+              )}
+            </div>
             <hr className="border-gray-300 w-full" />
-            <a
-              href="/user/mylistings"
-              className="text-black font-bold text-xl flex items-center gap-2"
-            >
-              <IonIcon icon={addOutline} className="w-5 h-5" />
-              Add Listings
-            </a>
+            <div className="relative">
+              <button
+                onClick={() => setFreshersDropdownOpen(!freshersDropdownOpen)}
+                className="text-black font-bold text-xl flex items-center gap-2 w-full"
+              >
+                <IonIcon icon={documentOutline} className="w-5 h-5" />
+                Freshers Guide
+                <IonIcon
+                  icon={
+                    freshersDropdownOpen ? chevronUpOutline : chevronDownOutline
+                  }
+                  className="w-5 h-5"
+                />
+                <span className="w-3 h-3 bg-yellow-500 rounded-full animate-ping ml-0.5"></span>
+                <span className="text-red-500 font-bold text-sm">New</span>
+              </button>
+              {freshersDropdownOpen && (
+                <div className="mt-2 flex flex-col gap-2 pl-6 transition-all duration-300">
+                  <a
+                    href="/user/resources"
+                    className="text-black font-medium text-lg flex items-center gap-2"
+                  >
+                    <IonIcon icon={pricetagOutline} className="w-5 h-5" />
+                    Useful Resources & Links
+                  </a>
+                </div>
+              )}
+            </div>
             <hr className="border-gray-300 w-full" />
             <a
               href="/user/profile"
