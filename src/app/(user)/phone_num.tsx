@@ -76,7 +76,7 @@ export default function PhoneNumber() {
 
       {/* Footer */}
       <footer className="w-full bg-[#123924] text-white text-center py-2">
-        Made with ❤️ by 2137
+        Made with ❤️ by 2139
       </footer>
     </div>
   );

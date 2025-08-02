@@ -15,8 +15,6 @@ api.interceptors.request.use(
     const accessToken = localStorage.getItem('access_token');
     if (accessToken && config?.headers) {
       config.headers['Authorization'] = `Bearer ${accessToken}`;
-      console.log("Request being made:");
-      console.log("Access token attached:", accessToken);
     }
     return config;
   },
@@ -37,26 +35,19 @@ api.interceptors.response.use(
 
       try {
         const refreshToken = localStorage.getItem('refresh_token');
-        console.log("Refresh token being sent:", refreshToken);
         const res = await axios.post(
           `${BACKEND_URL}/auth/token/refresh/`,
           { refresh: refreshToken } // Send refresh token in the body
         );
 
-        console.log("Response from token refresh:", res.data);
         localStorage.setItem('access_token', res.data.access);
         localStorage.setItem('refresh_token', res.data.refresh);
-        console.log("New access token stored:", res.data.access);
-        console.log("New refresh token stored:", res.data.refresh);
 
         originalRequest.headers['Authorization'] = `Bearer ${res.data.access}`;
-        console.log("Retrying original request with new access token:", originalRequest);
         return api(originalRequest);
       } catch (err) {
-        console.error('Token refresh failed:', err);
         const errorAny = err as any;
         if (errorAny.response) {
-          console.error('Backend refresh error response:', errorAny.response.data);
         }
         // Show alert before logging out
         if (window.confirm("Unauthorized access. Please login again.")) {
@@ -67,9 +58,7 @@ api.interceptors.response.use(
     }
 
     if (error.response) {
-      console.error('Backend API error:', error.response.data);
     } else {
-      console.error('API error:', error);
     }
 
     return Promise.reject(error);

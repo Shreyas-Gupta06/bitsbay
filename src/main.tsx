@@ -16,7 +16,7 @@ import PhoneNumber from "./app/(user)/phone_num";
 import Profile from "./app/(user)/profile";
 import ListingsPage from "./app/(user)/listings";
 import MyListingsPage from "./app/(user)/mylistings";
-import Resources from "./app/(user)/resources";
+import Clubs from "./app/(user)/clubs";
 import ErrorPage from "./errorPage";
 
 function App() {
@@ -93,10 +93,10 @@ function App() {
           }
         />
         <Route
-          path="/user/resources"
+          path="/user/clubs"
           element={
             <ProtectedRoute>
-              <Resources />
+              <Clubs />
             </ProtectedRoute>
           }
         />

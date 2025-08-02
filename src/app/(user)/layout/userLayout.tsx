@@ -123,11 +123,11 @@ export default function UserLayout({
               {freshersDropdownOpen && (
                 <div className="mt-2 flex flex-col gap-2 pl-6 transition-all duration-300">
                   <a
-                    href="/user/resources"
+                    href="/user/clubs"
                     className="text-black font-medium text-lg flex items-center gap-2"
                   >
                     <IonIcon icon={pricetagOutline} className="w-5 h-5" />
-                    Useful Resources & Links
+                    Clubs
                   </a>
                 </div>
               )}
@@ -165,7 +165,7 @@ export default function UserLayout({
             </div>
           </nav>
           <footer className="mt-auto text-center text-black text-xl">
-            Made with ❤️ by 2137
+            Made with ❤️ by 2139
           </footer>
         </div>
       </div>
@@ -177,7 +177,7 @@ export default function UserLayout({
 
       {/* Footer */}
       <footer className="w-full bg-[#123924] text-white text-center py-2">
-        Made with ❤️ by 2137
+        Made with ❤️ by 2139
       </footer>
     </div>
   );

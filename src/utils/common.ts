@@ -31,7 +31,457 @@ export const predefinedTags = [
   "notes",
   "slides",
   "pyqs",
-  "all tables (thermo & pns)",
+  "all tables (thermo, pns)",
   "lab coat",
   "calculator",
+];
+
+export interface Club {
+  name: string;
+  description: string | null;
+  recruitment: string | null;
+  insight?: string;
+}
+
+export const clubsData: Array<{
+  groupTitle: string;
+  clubs: Club[];
+}> = [
+  {
+    groupTitle: "Tech Teams & Clubs",
+    clubs: [
+      {
+        name: "Coding Club",
+        description:
+          "A large tech community with verticals in CP, app dev, front-end web, UI/UX, game dev, blockchain, and AI/ML. Members collaborate on projects, competitions, and workshops.",
+        recruitment: "First & Second Sem",
+      },
+      {
+        name: "DVM (Department of Visual Media)",
+        description:
+          "The tech team behind major campus events, known for developing apps, designing websites, editing videos. (technically a dept, but still mentioned here for visibility)",
+        recruitment: "First & Second Sem",
+        insight: "Recruitment is competitive.",
+      },
+      {
+        name: "SUTT (Student Union Technical Team)",
+        description:
+          "Manages critical student platforms such as the SU App, StudyDeck, and BOSM App. Operates through verticals in UI/UX, front-end, back-end, and app dev.",
+        recruitment: "First & Second Sem",
+        insight: "Recruitment is competitive.",
+      },
+      {
+        name: "Team Anant",
+        description:
+          "A student-led satellite team designing and building a 3U CubeSat with a multispectral imaging payload. One of the only fully undergrad-run space tech teams in India.",
+        recruitment: "Second Sem",
+      },
+      {
+        name: "IKRG (Infinity Kart Racing Group)",
+        description:
+          "BITS Pilani’s motorsports team building a high-performance electric go-kart. Operates verticals in mechanical, electronics, marketing, sponsorship, and publicity.",
+        recruitment: "Second Sem",
+      },
+      {
+        name: "CRISS Robotics",
+        description:
+          "Space engineering and robotics research group designing planetary rovers for competitions like ERC, IRDC, ISDC, IRC, and Robofest. Divided into mechanical, payload, electrical, and software subsystems.",
+        recruitment: "Second Sem",
+      },
+      {
+        name: "Robocon",
+        description:
+          "Robotics team participating in national and international contests. Members work on end-to-end robot design and implementation.",
+        recruitment: "Second Sem",
+      },
+      {
+        name: "Postman Innovation Lab",
+        description:
+          "A Postman-backed tech team focused on scalable product building. Vertical options include app development, game development, blockchain, UI/UX, web development, and video editing.",
+        recruitment: "Second Sem",
+        insight:
+          "Members receive RKIC lab access.",
+      },
+      {
+        name: "KXR Labs (Kalipatnapu XR Lab)",
+        description:
+          "Dedicated to pushing boundaries in AR/VR development. Members explore real-world applications and immersive experiences.",
+        recruitment: "Second Sem",
+        insight: "Members receive RKIC lab access.",
+      },
+    ],
+  },
+  {
+    groupTitle: "Finance & Entrepreneurship",
+    clubs: [
+      {
+        name: "Wall Street Club",
+        description:
+          "Operates two student-managed funds — Questus (Value Investing) and Flowus (Quant Trading). Members research, invest, and present ideas in equity markets.",
+        recruitment: "Both Sems",
+        insight:
+          "Recruitment is extremely competitive; selects around 11–12 members.",
+      },
+      {
+        name: "EFA (Economics & Finance Association)",
+        description:
+          "A forum to explore finance, economics, and their intersection with tech and policy. Encourages discussions, research, and events.",
+        recruitment: "Both Sems",
+      },
+      {
+        name: "Quant Club",
+        description:
+          "Focused on data-driven decision-making and quantitative finance. Operates in two verticals: Research and Development.",
+        recruitment: "First Sem",
+      },
+      {
+        name: "PIEDS",
+        description:
+          "A key player in BITS startup culture, supporting student-led innovation and entrepreneurship through mentorship and events.",
+        recruitment: "Second Sem",
+        insight:
+          "Recruitment is competitive; Members also receive RKIC lab access.",
+      },
+      {
+        name: "CEL (Center for Entrepreneurial Leadership)",
+        description:
+          "Flagbearers of BITS’ entrepreneurial ecosystem, nurturing innovation at the campus and national level. Runs events, mentorship, and startup support.",
+        recruitment: "Both Sems",
+        insight: "Recruitment is competitive",
+      },
+    ],
+  },
+  {
+    groupTitle: "Volunteer Groups",
+    clubs: [
+      {
+        name: "Anchor",
+        description:
+          "A BITSians-only support group for queer, questioning, and allied students. Focuses on building a safe and inclusive environment while promoting awareness on gender and sexuality.",
+        recruitment: "First Sem",
+        insight: "Students are also drawn to the PORs these groups offer.",
+      },
+      {
+        name: "Nirmaan",
+        description:
+          "A student-run NGO focused on social change and community engagement through education, awareness, and development initiatives.",
+        recruitment: "Both Sems",
+        insight: "Students are also drawn to the PORs these groups offer.",
+      },
+      {
+        name: "NSS",
+        description:
+          "Works across five pillars: education for underprivileged children, sustainability, healthcare camps, inclusion of differently-abled children, and leadership development.",
+        recruitment: "First Sem",
+        insight: "Students are also drawn to the PORs these groups offer.",
+      },
+      {
+        name: "PARC",
+        description:
+          "Student division of the Pilani AtmaNirbhar Resource Center (PARC), driven by BITSAA, focusing on rural empowerment around Pilani.",
+        recruitment: "Second Sem",
+        insight: "Students are also drawn to the PORs these groups offer.",
+      },
+    ],
+  },
+  {
+    groupTitle: "Music",
+    clubs: [
+      {
+        name: "Gurukul",
+        description:
+          "Known for organizing high-energy musical nights with massive turnout, fostering a diverse music community.",
+        recruitment: "Both Sems",
+      },
+      {
+        name: "Music Club",
+        description:
+          "The oldest performing arts club at BITS. Performs at inaugurations, Music Nite, Psenti Nite, and other major campus events.",
+        recruitment: "Both Sems",
+      },
+      {
+        name: "Ragamālika",
+        description:
+          "The Indian classical music and dance club showcasing cultural performances and training.",
+        recruitment: "Second Sem",
+      },
+      {
+        name: "Karaoke Club",
+        description: null,
+        recruitment: null,
+      },
+    ],
+  },
+  {
+    groupTitle: "Consulting",
+    clubs: [
+      {
+        name: "BITS Pilani Consulting Club (BPCC)",
+        description:
+          "Offers live consulting projects in domains like AI, healthtech, and retail. Hosts case prep sessions, workshops, and its own case book. Open to freshers.",
+        recruitment: "Both Sems",
+      },
+      {
+        name: "180 Degrees Consulting (180DC)",
+        description:
+          "Global consulting org with a high-performing BITS branch. Has worked with UNICEF-backed NGOs and runs international market-entry projects.",
+        recruitment: "Second Year Only",
+      },
+    ],
+  },
+  {
+    groupTitle: "Skill Development Clubs",
+    clubs: [
+      {
+        name: "Communo",
+        description: "Public speaking and communication development",
+        recruitment: null,
+      },
+      {
+        name: "FMAC (Film Making Club)",
+        description: "Filmmaking and storytelling",
+        recruitment: null,
+      },
+      {
+        name: "Photog",
+        description: "Photography and visual content",
+        recruitment: null,
+      },
+      {
+        name: "Hindi Press Club",
+        description: "Hindi journalism and campus coverage",
+        recruitment: null,
+      },
+      {
+        name: "English Press Club",
+        description: "English journalism and reporting",
+        recruitment: null,
+      },
+      {
+        name: "REC (Renewable Energy Club)",
+        description: "Clean tech and energy innovation",
+        recruitment: null,
+      },
+      {
+        name: "SARC",
+        description: "Students Alumni Relations Cell",
+        recruitment: null,
+      },
+      {
+        name: "Embryo",
+        description: "Brings in external speakers and alumni for lectures",
+        recruitment: null,
+      },
+      {
+        name: "DebSoc",
+        description: "Competitive debating and discussion",
+        recruitment: null,
+      },
+      {
+        name: "GDSC",
+        description: "Google-supported coding community",
+        recruitment: null,
+      },
+      {
+        name: "Product Management Club",
+        description: "PM fundamentals, case studies, and mock sprints",
+        recruitment: null,
+      },
+      {
+        name: "BITSMUN",
+        description: "UN simulations, diplomacy, and policy debates",
+        recruitment: null,
+      },
+    ],
+  },
+  {
+    groupTitle: "Hobby Clubs",
+    clubs: [
+      {
+        name: "Astro Club",
+        description: null,
+        recruitment: null,
+      },
+      {
+        name: "CrAC (Creative Activities Club)",
+        description: null,
+        recruitment: null,
+      },
+      {
+        name: "Cubing Club",
+        description: null,
+        recruitment: null,
+      },
+      {
+        name: "Dance Club",
+        description: null,
+        recruitment: null,
+      },
+      {
+        name: "Eastern Outlook",
+        description: null,
+        recruitment: null,
+      },
+      {
+        name: "English Language Activities Society",
+        description: null,
+        recruitment: null,
+      },
+      {
+        name: "Fashion Club",
+        description: null,
+        recruitment: null,
+      },
+      {
+        name: "FitBits (Fitness Club)",
+        description: null,
+        recruitment: null,
+      },
+      {
+        name: "KalamVansh (Literary Society)",
+        description: null,
+        recruitment: null,
+      },
+      {
+        name: "Gaming Club",
+        description: null,
+        recruitment: null,
+      },
+      {
+        name: "MAC (Mountaineering and Adventure Club)",
+        description: null,
+        recruitment: null,
+      },
+      {
+        name: "Comedy Hub",
+        description: null,
+        recruitment: null,
+      },
+      {
+        name: "Mime Club",
+        description: null,
+        recruitment: null,
+      },
+      {
+        name: "Poetry Club",
+        description: null,
+        recruitment: null,
+      },
+      {
+        name: "Matrix (Math Club)",
+        description: null,
+        recruitment: null,
+      },
+      {
+        name: "Hindi Drama Club (HDC)",
+        description: null,
+        recruitment: null,
+      },
+      {
+        name: "Public Policy Club",
+        description: null,
+        recruitment: null,
+      },
+      {
+        name: "Radioaktiv",
+        description: null,
+        recruitment: null,
+      },
+      {
+        name: "Sovesa (Social Ventures Club)",
+        description: null,
+        recruitment: null,
+      },
+    ],
+  },
+  {
+    groupTitle: "Cultural Associations",
+    clubs: [
+      {
+        name: "Andhra Samithi",
+        description: "Telangana and Andhra Pradesh",
+        recruitment: null,
+      },
+      {
+        name: "Arunodoi",
+        description: "North-East India",
+        recruitment: null,
+      },
+      {
+        name: "Delhi Capitol",
+        description: "Delhi and Delhi NCR",
+        recruitment: null,
+      },
+      {
+        name: "Gurjari",
+        description: "Gujarat",
+        recruitment: null,
+      },
+      {
+        name: "Haryana Cultural Association",
+        description: "Haryana",
+        recruitment: null,
+      },
+      {
+        name: "Kairali",
+        description: "Kerala",
+        recruitment: null,
+      },
+      {
+        name: "Kannada Vedike",
+        description: "Karnataka",
+        recruitment: null,
+      },
+      {
+        name: "Madhyansh",
+        description: "Madhya Pradesh",
+        recruitment: null,
+      },
+      {
+        name: "Maharashtra Mandal",
+        description: "Maharashtra",
+        recruitment: null,
+      },
+      {
+        name: "Marudhara",
+        description: "Rajasthan",
+        recruitment: null,
+      },
+      {
+        name: "Maurya Vihar",
+        description: "Bihar, Jharkhand",
+        recruitment: null,
+      },
+      {
+        name: "Moruchhaya",
+        description: "West Bengal",
+        recruitment: null,
+      },
+      {
+        name: "Pilani Tamizh Mandalam",
+        description: "Tamil Nadu",
+        recruitment: null,
+      },
+      {
+        name: "Punjab Cultural Association",
+        description: "Punjab",
+        recruitment: null,
+      },
+      {
+        name: "Sangam",
+        description: "Uttar Pradesh",
+        recruitment: null,
+      },
+      {
+        name: "Udgam",
+        description: "J&K, Himachal Pradesh, Uttarakhand, Ladakh",
+        recruitment: null,
+      },
+      {
+        name: "Utkal Samaj",
+        description: "Odisha",
+        recruitment: null,
+      },
+    ],
+  },
 ];
