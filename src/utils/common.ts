@@ -485,3 +485,89 @@ export const clubsData: Array<{
     ],
   },
 ];
+
+export const hostelOptions = [
+  { label: "Shankar Bhawan", value: "shankar" },
+  { label: "Gandhi Bhawan", value: "gandhi" },
+  { label: "Krishna Bhawan", value: "krishna" },
+  { label: "Meera Bhawan", value: "meera" },
+  { label: "SR Bhawan", value: "sr" },
+  { label: "Budh Bhawan", value: "budh" },
+  { label: "VK Bhawan", value: "vk" },
+  { label: "Vyas Bhawan", value: "vyas" },
+  { label: "Ram Bhawan", value: "ram" },
+  { label: "RP Bhawan", value: "rp" },
+  { label: "Bhagirath Bhawan", value: "bhagirath" },
+  { label: "Ashok Bhawan", value: "ashok" },
+  { label: "CVR Bhawan", value: "cvr" },
+  { label: "Malviya Bhawan", value: "malviya" },
+];
+
+export const contactsByHostel: Record<string, Array<{ label: string; phone: string }>> = {
+  shankar: [
+    { label: "Chief Warden (Prof. RP Mishra)", phone: "+91 96940 96457" },
+    { label: "Assoc. Dean SWD (Prof. Navin Singh)", phone: "+91 98873 21072" },
+    { label: "Chief Security Officer", phone: "+91 94140 82758" },
+    { label: "SWD Office", phone: "01596242282" },
+    { label: "Sk warden (Prof. Sharad)", phone: "+91 93511 50986" },
+    { label: "Sk supri: (Harbansh Lal)", phone: "+91 97856 44053" },
+    { label: "Sk chowki (Vikram Singh)", phone: "+91 87696 40715" },
+    { label: "Cleaner Supervisor number", phone: "+91 81043 34764" },
+    { label: "Dhobi (Ground floor)", phone: "+91 90019 55100" },
+    { label: "Dhobi (First floor)", phone: "+91 78780 29706" },
+    { label: "Laundromat (Malviya side)", phone: "+91 90242 42548" },
+    { label: "Hostel Admission Office", phone: "Sk 2101" },
+  ],
+  gandhi: [
+    { label: "Warden: Prof. Nitin", phone: "9694096452" },
+    { label: "Supri: Ranveer Rathore", phone: "9694098474" },
+  ],
+  krishna: [
+    { label: "Warden: Dr. Srinivas", phone: "8854065246" },
+    { label: "Supri: Samundar Singh", phone: "9694096473" },
+  ],
+  meera: [
+    { label: "Warden: Prof. Rakhee", phone: "9983480689" },
+    { label: "Supri: Ms. Ritu", phone: "9694096468" },
+  ],
+  sr: [
+    { label: "Warden: Dr. Rajesh", phone: "9547826092" },
+    { label: "Supri: Ranveer Singh", phone: "9588099929" },
+  ],
+  budh: [
+    { label: "Warden: Trilok Mathur", phone: "9694096460" },
+    { label: "Supri: Rohitashwa R.", phone: "9694096465" },
+  ],
+  vk: [
+    { label: "Warden: Suvanjan B.", phone: "9330654120" },
+    { label: "Supri: Randhir Singh", phone: "9001811615" },
+  ],
+  vyas: [
+    { label: "Warden: Dr. Praveen", phone: "8239818326" },
+    { label: "Supri: KP Gurjar", phone: "7023476745" },
+  ],
+  ram: [
+    { label: "Warden: Dr. Pandey", phone: "9950952634" },
+    { label: "Supri: Mahavir Singh", phone: "9694096464" },
+  ],
+  rp: [
+    { label: "Warden: Prof. Rajeev", phone: "6378364745" },
+    { label: "Supri: Randhir Singh", phone: "9001811615" },
+  ],
+  bhagirath: [
+    { label: "Warden: Prof. RR Mishra", phone: "9411280207" },
+    { label: "Supri: Ranveer Singh", phone: "9588099929" },
+  ],
+  ashok: [
+    { label: "Warden: Prof. Nirankush", phone: "9560519781" },
+    { label: "Supri: Rajendra B.", phone: "7568998155" },
+  ],
+  cvr: [
+    { label: "Warden: Prof. Prashant", phone: "9571552353" },
+    { label: "Supri: Rajendra B.", phone: "7568998155" },
+  ],
+  malviya: [
+    { label: "Warden: Prof. Trilok", phone: "9468675801" },
+    { label: "Supri: Rohitashwa R.", phone: "9694096465" },
+  ],
+};

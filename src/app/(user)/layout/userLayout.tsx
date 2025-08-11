@@ -12,6 +12,7 @@ import {
   chevronDownOutline,
   documentOutline,
   pricetagOutline,
+  callOutline, // <-- import phone icon
 } from "ionicons/icons";
 
 export default function UserLayout({
@@ -103,6 +104,15 @@ export default function UserLayout({
                 </div>
               )}
             </div>
+            <hr className="border-gray-300 w-full" />
+            {/* Contacts link above Freshers Guide */}
+            <a
+              href="/user/contacts"
+              className="text-black font-bold text-xl flex items-center gap-2"
+            >
+              <IonIcon icon={callOutline} className="w-5 h-5 text-black" />
+              Contacts
+            </a>
             <hr className="border-gray-300 w-full" />
             <div className="relative">
               <button

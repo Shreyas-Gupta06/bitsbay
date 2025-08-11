@@ -17,6 +17,7 @@ import Profile from "./app/(user)/profile";
 import ListingsPage from "./app/(user)/listings";
 import MyListingsPage from "./app/(user)/mylistings";
 import Clubs from "./app/(user)/clubs";
+import Contacts from "./app/(user)/contacts";
 import ErrorPage from "./errorPage";
 
 function App() {
@@ -97,6 +98,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Clubs />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/user/contacts"
+          element={
+            <ProtectedRoute>
+              <Contacts />
             </ProtectedRoute>
           }
         />
